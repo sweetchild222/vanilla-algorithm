@@ -1,0 +1,17 @@
+cost(p_u, q_i, b_u, b_i) = \sum_{u,i \epsilon k }(r_u_i - b_u - b_i - p_uq_i)^2
+
+
+r_{(predict)} = p_uq_i + b_u + b_i
+
+
+
+\frac{\partial}{\partial p_u}\sum_{u,i \epsilon k }(r_u_i - b_u - b_i - p_uq_i)^2
+
+
+
+= p_uq_i^2 + r_{ui}^2-2r_{ui}p_uq_i-2r_{ui}b_u-2r_{ui}b_i+2b_ub_i + b^2_i + b^2_u + 2b_up_uq_i + 2b_ip_uq_i 
+
+= q_i(p_uq_i + 2b_u + 2bi + -2r_{ui}) = q_i(p_uq_i + b_u + bi -r_{ui})
+
+
+p_uq_i + 2b_i + b_u - 2r_{ui} = p_uq_i + b_i + b_u - r_{ui}

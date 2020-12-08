@@ -1,0 +1,112 @@
+== License
+
+All code found in this repository is licensed under GPL v3
+
+[source]
+----
+Copyright 2016-2021 James Choi(sweetchild22.ik@gmail.com)
+
+The files are vanilla-algorithm for deep learning, big data and so on
+
+The files are free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+The files are distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with vanilla-algorithm. If not, see <http://www.gnu.org/licenses/>.
+----
+
+## Prerequisites
+Conda (Optional)
+
+```sh
+conda create -n vanilla-cnn python
+conda activate vanilla-cnn
+```
+
+```sh
+pip install -r requirements.txt
+```
+
+## Usage
+
+```sh
+python cnn.py (Train & Test with default options)
+
+python cnn.py -h
+usage: CNN [-h] [-c [1-10]] [-m {light,complex}] [-g {Adam,SGD,RMSprop}] [-e EPOCHS] [-b BATCHES]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -c [1-10]             classes (default: 3)
+  -m {light,complex}    sample model type (default:light)
+  -g {Adam,SGD,RMSprop}
+                        sample gradient type (default: RMSprop)
+  -e EPOCHS             epochs (default: 60)
+  -b BATCHES            batches (default: classes x 3)
+```
+
+## Directory structure
+
+```
+.
+├── README.md
+├── cnn.py               main - CNN 실행파일
+├── model.py             layer들을 모아서 forward,backward 실행
+├── model_templates.py   example models
+├── requirements.txt
+├── utils.py             mnist file load, matrix 변환
+├── layer                hidden layer, input, output layer class 모음
+│   ├── abs_layer.py     layer의 추상 class
+│   ├── convolution.py
+│   ├── dense.py
+│   ├── flatten.py
+│   ├── input.py
+│   └── max_pooling.py
+├── gradient             gradient 종류 모음
+│   ├── abs_gradient.py  gradient의 추상 class
+│   ├── adam.py
+│   ├── creator.py
+│   ├── rms_prop.py
+│   └── sgd.py
+├── drawer               matrix 값들을 이미지 저장 (Optional)
+│   ├── arial.ttf
+│   └── drawer.py
+└── mnist
+    ├── train
+    │   ├── zero (28x28 100 images)
+    │   │   ├── 1912.png
+    │   │   ├── ...
+    │   │   └── 708.png
+    │   ├── one
+    │   ├── two
+    │   ├── ...
+    │   └── nine
+    └── test
+        ├── zero (28x28 5 images)
+        │   ├── 1912.png
+        │   ├── ...
+        │   └── 708.png
+        ├── one
+        ├── two
+        ├── ...
+        └── nine
+```
+
+## Author
+
+👤 **sweetchild222**
+
+
+## Show your support
+
+Give a ⭐️ if this project helped you!
+
+***
+_This README was generated with ❤️ by [readme-md-generator](https://github.com/kefranabg/readme-md-generator)_
