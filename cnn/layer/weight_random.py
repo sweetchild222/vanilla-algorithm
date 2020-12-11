@@ -21,7 +21,7 @@ def lecunUniform(fab_in, fab_out, size):
     limit = math.sqrt(3/(fab_in))
     return np.random.uniform(-limit, limit, size=size)
 
-def lecunNormal(fab_in, fab_out, size):
+def lecunNormal(fab_in, fab_out, size):    
     stddev = math.sqrt(1/(fab_in))
     return np.random.normal(0, stddev, size=size)
 
