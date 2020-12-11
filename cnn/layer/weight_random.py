@@ -1,28 +1,27 @@
 import numpy as np
-import math
 
 def glorotUniform(fab_in, fab_out, size):
-    limit = math.sqrt(6/(fab_in + fab_out))
+    limit = np.sqrt(6/(fab_in + fab_out))
     return np.random.uniform(-limit, limit, size=size)
 
 def glorotNormal(fab_in, fab_out, size):
-    stddev = math.sqrt(2/(fab_in + fab_out))
+    stddev = np.sqrt(2/(fab_in + fab_out))
     return np.random.normal(0, stddev, size=size)
 
 def heUniform(fab_in, fab_out, size):
-    limit = math.sqrt(6/(fab_in))
+    limit = np.sqrt(6/(fab_in))
     return np.random.uniform(-limit, limit, size=size)
 
 def heNormal(fab_in, fab_out, size):
-    stddev = math.sqrt(2/(fab_in))
+    stddev = np.sqrt(2/(fab_in))
     return np.random.normal(0, stddev, size=size)
 
 def lecunUniform(fab_in, fab_out, size):
-    limit = math.sqrt(3/(fab_in))
+    limit = np.sqrt(3/(fab_in))
     return np.random.uniform(-limit, limit, size=size)
 
-def lecunNormal(fab_in, fab_out, size):    
-    stddev = math.sqrt(1/(fab_in))
+def lecunNormal(fab_in, fab_out, size):
+    stddev = np.sqrt(1/(fab_in))
     return np.random.normal(0, stddev, size=size)
 
 def createWeightRandom(weight_random, fab_in, fab_out, size):
