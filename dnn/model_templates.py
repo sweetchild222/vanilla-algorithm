@@ -52,7 +52,7 @@ def weight_random_lecun_uniform():
     return {'type':'lecun', 'random':'uniform'}
 
 
-def template_complex(activation, gradient, weight_random, input_shape, classes):
+def template_complex(activation, weight_random, gradient, input_shape, classes):
 
     layers = [
         {'type':'input', 'parameter':{'input_shape':input_shape}},
@@ -65,7 +65,7 @@ def template_complex(activation, gradient, weight_random, input_shape, classes):
     return layers
 
 
-def template_light(activation, gradient, weight_random, input_shape, classes):
+def template_light(activation, weight_random, gradient, input_shape, classes):
 
     layers = [
         {'type':'input', 'parameter':{'input_shape':input_shape}},
@@ -90,4 +90,4 @@ def createModelTemplate(modelType, activationType, weightType, weightRandomType,
     activation = activationTypeList[activationType]
     weightRandom = weightRandomTypeList[weightType + '_' + weightRandomType]
 
-    return template(activation(), gradient(), weightRandom(), input_shape, classes)
+    return template(activation(), weightRandom(), gradient(), input_shape, classes)

@@ -1,5 +1,4 @@
 import numpy as np
-import math
 from layer.weight_random import *
 from layer.abs_layer import *
 from gradient.creator import *
