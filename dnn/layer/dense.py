@@ -1,6 +1,6 @@
 import numpy as np
 import math
-from layer.random_weight import *
+from layer.weight_random import *
 from layer.abs_layer import *
 from gradient.creator import *
 from activation.creator import *
@@ -26,7 +26,7 @@ class Dense(ABSLayer):
         fab_out = size[0]
         fab_in = size[1]
 
-        return createRandomWeight(weight_random, fab_in, fab_out, size)
+        return createWeightRandom(weight_random, fab_in, fab_out, size)
 
     def forward(self, input):
 

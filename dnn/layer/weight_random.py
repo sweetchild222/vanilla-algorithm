@@ -25,7 +25,7 @@ def lecunNormal(fab_in, fab_out, size):
     stddev = math.sqrt(1/(fab_in))
     return np.random.normal(0, stddev, size=size)
 
-def createRandomWeight(weight_random, fab_in, fab_out, size):
+def createWeightRandom(weight_random, fab_in, fab_out, size):
 
     typeClass = {'glorot_uniform':glorotUniform, 'glorot_normal':glorotNormal, 'he_uniform':heUniform, 'he_normal':heNormal, 'lecun_uniform':lecunUniform, 'lecun_normal':lecunNormal}
 

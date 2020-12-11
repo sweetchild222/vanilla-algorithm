@@ -52,7 +52,6 @@ def weight_random_lecun_uniform():
     return {'type':'lecun', 'random':'uniform'}
 
 
-
 def template_complex(activation, gradient, weight_random, input_shape, classes):
 
     layers = [
