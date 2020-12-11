@@ -55,9 +55,9 @@ def template_complex(activation, weight_random, gradient, input_shape, classes):
 
     layers = [
         {'type':'input', 'parameter':{'input_shape':input_shape}},
-        {'type':'convolution', 'parameter':{'filters':8, 'kernel_size':(3, 3), 'strides':(1, 1), 'padding':True, 'activation':activation, 'gradient':gradient}},
+        {'type':'convolution', 'parameter':{'filters':8, 'kernel_size':(3, 3), 'strides':(1, 1), 'padding':True, 'activation':activation, 'weight_random':weight_random, 'gradient':gradient}},
         {'type':'maxPooling', 'parameter':{'pool_size':(2, 2), 'strides':None}},
-        {'type':'convolution', 'parameter':{'filters':8, 'kernel_size':(3, 3), 'strides':(1, 1), 'padding':True, 'activation':activation, 'gradient':gradient}},
+        {'type':'convolution', 'parameter':{'filters':8, 'kernel_size':(3, 3), 'strides':(1, 1), 'padding':True, 'activation':activation, 'weight_random':weight_random, 'gradient':gradient}},
         {'type':'maxPooling', 'parameter':{'pool_size':(2, 2), 'strides':None}},
         {'type':'flatten', 'parameter':{}},
         {'type':'dense', 'parameter':{'units':128, 'activation':activation, 'weight_random':weight_random, 'gradient':gradient}},
@@ -70,7 +70,7 @@ def template_light(activation, weight_random, gradient, input_shape, classes):
 
     layers = [
         {'type':'input', 'parameter':{'input_shape':input_shape}},
-        {'type':'convolution', 'parameter':{'filters':3, 'kernel_size':(3, 3), 'strides':(1, 1), 'padding':True, 'activation':activation, 'gradient':gradient}},
+        {'type':'convolution', 'parameter':{'filters':3, 'kernel_size':(3, 3), 'strides':(1, 1), 'padding':True, 'activation':activation, 'weight_random':weight_random, 'gradient':gradient}},
         {'type':'maxPooling', 'parameter':{'pool_size':(2, 2), 'strides':None}},
         {'type':'flatten', 'parameter':{}},
         {'type':'dense', 'parameter':{'units':64, 'activation':activation, 'weight_random':weight_random, 'gradient':gradient}},
@@ -86,11 +86,11 @@ def template_light(activation, weight_random, gradient, input_shape, classes):
 
     layers = [
         {'type':'input', 'parameter':{'input_shape':input_shape}},
-        {'type':'convolution', 'parameter':{'filters':8, 'kernel_size':(3, 3), 'strides':(1, 1), 'padding':True, 'activation':activation, 'gradient':gradient}},
+        {'type':'convolution', 'parameter':{'filters':8, 'kernel_size':(3, 3), 'strides':(1, 1), 'padding':True, 'activation':activation, 'weight_random':weight_random, 'gradient':gradient}},
         {'type':'maxPooling', 'parameter':{'pool_size':(2, 2), 'strides':None}},
-        {'type':'convolution', 'parameter':{'filters':8, 'kernel_size':(3, 3), 'strides':(1, 1), 'padding':True, 'activation':activation, 'gradient':gradient}},
+        {'type':'convolution', 'parameter':{'filters':8, 'kernel_size':(3, 3), 'strides':(1, 1), 'padding':True, 'activation':activation, 'weight_random':weight_random, 'gradient':gradient}},
         {'type':'maxPooling', 'parameter':{'pool_size':(2, 2), 'strides':None}},
-        {'type':'convolution', 'parameter':{'filters':1, 'kernel_size':(3, 3), 'strides':(1, 1), 'padding':True, 'activation':activation, 'gradient':gradient}},
+        {'type':'convolution', 'parameter':{'filters':1, 'kernel_size':(3, 3), 'strides':(1, 1), 'padding':True, 'activation':activation, 'weight_random':weight_random, 'gradient':gradient}},
         {'type':'maxPooling', 'parameter':{'pool_size':(2, 2), 'strides':None}},
         #{'type':'maxPooling', 'parameter':{'pool_size':(2, 2), 'strides':None}},
         {'type':'flatten', 'parameter':{}},
@@ -103,8 +103,8 @@ def template_light(activation, weight_random, gradient, input_shape, classes):
 
     layers = [
         {'type':'input', 'parameter':{'input_shape':input_shape}},
-        {'type':'convolution', 'parameter':{'filters':1, 'kernel_size':(5, 5), 'strides':(1, 1), 'padding':True, 'activation':activation, 'gradient':gradient}},
-        {'type':'convolution', 'parameter':{'filters':1, 'kernel_size':(3, 3), 'strides':(1, 1), 'padding':True, 'activation':activation, 'gradient':gradient}},
+        {'type':'convolution', 'parameter':{'filters':1, 'kernel_size':(5, 5), 'strides':(1, 1), 'padding':True, 'activation':activation, 'weight_random':weight_random, 'gradient':gradient}},
+        {'type':'convolution', 'parameter':{'filters':1, 'kernel_size':(3, 3), 'strides':(1, 1), 'padding':True, 'activation':activation, 'weight_random':weight_random, 'gradient':gradient}},
         {'type':'maxPooling', 'parameter':{'pool_size':(2, 2), 'strides':None}},
         {'type':'flatten', 'parameter':{}},
         {'type':'dense', 'parameter':{'units':64, 'activation':activation, 'weight_random':weight_random, 'gradient':gradient}},

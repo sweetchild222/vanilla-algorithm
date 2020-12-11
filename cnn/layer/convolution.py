@@ -1,17 +1,18 @@
 import numpy as np
+from layer.weight_random import *
 from layer.abs_layer import *
 from gradient.creator import *
 from activation.creator import *
 
 class Convolution(ABSLayer):
 
-    def __init__(self, filters, kernel_size, strides, padding, activation, backward_layer, gradient):
+    def __init__(self, filters, kernel_size, strides, padding, activation, weight_random, backward_layer, gradient):
         super(Convolution, self).__init__(backward_layer)
 
         self.strides = strides
         self.padding_size = self.paddingSize(kernel_size[0], kernel_size[1]) if padding else (0,0)
 
-        self.weight = self.initWeight((filters, self.input_shape[0], kernel_size[0], kernel_size[1]))
+        self.weight = self.createWeight(weight_random, (filters, self.input_shape[0], kernel_size[0], kernel_size[1]))
         self.bias = np.zeros((filters, 1))
 
         self.gradient = createGradient(gradient)
@@ -21,11 +22,16 @@ class Convolution(ABSLayer):
         self.last_input = None
         self.activation = createActivation(activation)
 
+    def createWeight(self, weight_random, size):
 
-    def initWeight(self, size, scale = 1.0):
+        (filters, colors, kernel_height, kernel_width) = size
 
-        stddev = scale/np.sqrt(np.prod(size))
-        return np.random.normal(loc = 0, scale = stddev, size = size)
+        receptive_field = kernel_height * kernel_width
+
+        fab_in = receptive_field * colors
+        fab_out = receptive_field * filters
+
+        return createWeightRandom(weight_random, fab_in, fab_out, size)
 
     def appendPadding(self, input):
 
