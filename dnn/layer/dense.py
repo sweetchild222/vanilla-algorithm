@@ -1,17 +1,19 @@
 import numpy as np
+import math
+from layer.random_weight import *
 from layer.abs_layer import *
 from gradient.creator import *
 from activation.creator import *
 
 class Dense(ABSLayer):
 
-    def __init__(self, units, activation, backward_layer, gradient):
+    def __init__(self, units, activation, weight_random, backward_layer, gradient):
         super(Dense, self).__init__(backward_layer)
 
         self.units = units
         self.activation = createActivation(activation)
 
-        self.weight = self.initWeight((units, self.input_shape[0]))
+        self.weight = self.createWeight(weight_random, (units, self.input_shape[0]))
         self.bias = np.zeros((units, 1))
 
         self.last_input = None
@@ -19,8 +21,12 @@ class Dense(ABSLayer):
         self.gradient = createGradient(gradient)
         self.gradient.setShape(self.weight.shape, self.bias.shape)
 
-    def initWeight(self, size):
-        return np.random.standard_normal(size=size) * 0.01
+    def createWeight(self, weight_random, size):
+
+        fab_out = size[0]
+        fab_in = size[1]
+
+        return createRandomWeight(weight_random, fab_in, fab_out, size)
 
     def forward(self, input):
 

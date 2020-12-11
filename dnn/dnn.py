@@ -82,7 +82,7 @@ def drawPredicts(predicts, feature_max):
         matrixToImage(filePath, matrix)
 
 
-def print_arg(model, activation, gradient, epochs, batches, train_dataset_count):
+def print_arg(model, activation, weight, weightRandom, gradient, epochs, batches, train_dataset_count):
 
     reduced = batches > train_dataset_count
 
@@ -90,11 +90,10 @@ def print_arg(model, activation, gradient, epochs, batches, train_dataset_count)
 
     batch_str = str(batches) + (' (reduced)' if reduced else '')
 
-    arg = ['model', 'activation', 'gradient', 'epochs', 'train dataset count', 'batches']
-    values = [model, activation, gradient, epochs, train_dataset_count, batch_str]
+    arg = ['model', 'activation', 'weight', 'weightRandom', 'gradient', 'epochs', 'train dataset count', 'batches']
+    values = [model, activation, weight, weightRandom, gradient, epochs, train_dataset_count, batch_str]
     table = {'Argument':arg, 'Values':values}
     print_table(table, True)
-
 
 def print_performance(span):
 
@@ -141,6 +140,8 @@ def parse_arg():
     parser.add_argument('-m', dest='modelType', type=str, default='light', choices=['light', 'complex'], help='sample model type (default:light)')
     parser.add_argument('-g', dest='gradientType', type=str, default='rmsProp', choices=['adam', 'sgd', 'rmsProp'], help='sample gradient type (default: rmsProp)')
     parser.add_argument('-a', dest='activationType', type=str, default='elu', choices=['linear', 'relu', 'elu', 'leakyRelu', 'sigmoid', 'tanh'], help='sample activation type (default: relu)')
+    parser.add_argument('-w', dest='weightType', type=str, default='he', choices=['lecun', 'glorot', 'he'], help='initial weight type (default: he)')
+    parser.add_argument('-r', dest='weightRandomType', type=str, default='normal', choices=['uniform', 'normal'], help='initial weight random type (default: normal)')
     parser.add_argument('-e', dest='epochs', type=int, default=1000, help='epochs (default: 1000)')
     parser.add_argument('-b', dest='batches', type=int, default=100, help='batches (default: 100)')
     parser.add_argument('-d', dest='draw_epoch_term', type=int, default=200, help='draw epoch term (default: 200)')
@@ -158,15 +159,15 @@ def parse_arg():
     return args
 
 
-def main(modelType, activationType, gradientType, epochs, batches, draw_epoch_term):
+def main(modelType, activationType, weightType, weightRandomType, gradientType, epochs, batches, draw_epoch_term):
 
     train_x, train_y, test_x, oneHotMap, feature_max = loadDataSet()
 
-    print_arg(modelType, activationType, gradientType, epochs, batches, len(train_x))
+    print_arg(modelType, activationType, weightType, weightRandomType, gradientType, epochs, batches, len(train_x))
 
     batches = adjust_batches(batches, len(train_x))
 
-    modelTemplate = createModelTemplate(modelType, activationType, gradientType, train_x.shape[1:], len(oneHotMap))
+    modelTemplate = createModelTemplate(modelType, activationType, weightType, weightRandomType, gradientType, train_x.shape[1:], len(oneHotMap))
 
     predicts = []
 
@@ -184,4 +185,4 @@ if __name__ == "__main__":
     args = parse_arg()
 
     if args != None:
-        main(args.modelType, args.activationType, args.gradientType, args.epochs, args.batches, args.draw_epoch_term)
+        main(args.modelType, args.activationType, args.weightType, args.weightRandomType, args.gradientType, args.epochs, args.batches, args.draw_epoch_term)

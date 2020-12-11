@@ -9,7 +9,6 @@ def gradient_RMSprop():
 
 
 
-
 def activation_softmax():
     return {'type':'softmax', 'parameter':{}}
 
@@ -33,40 +32,63 @@ def activation_tanh():
 
 
 
-def template_complex(activation, gradient, input_shape, classes):
+
+def weight_random_glorot_normal():
+    return {'type':'glorot', 'random':'normal'}
+
+def weight_random_glorot_uniform():
+    return {'type':'glorot', 'random':'uniform'}
+
+def weight_random_he_normal():
+    return {'type':'he', 'random':'normal'}
+
+def weight_random_he_uniform():
+    return {'type':'he', 'random':'uniform'}
+
+def weight_random_lecun_normal():
+    return {'type':'lecun', 'random':'normal'}
+
+def weight_random_lecun_uniform():
+    return {'type':'lecun', 'random':'uniform'}
+
+
+
+def template_complex(activation, gradient, weight_random, input_shape, classes):
 
     layers = [
         {'type':'input', 'parameter':{'input_shape':input_shape}},
         {'type':'flatten', 'parameter':{}},
-        {'type':'dense', 'parameter':{'units':1024, 'activation':activation, 'gradient':gradient}},
-        {'type':'dense', 'parameter':{'units':512, 'activation':activation, 'gradient':gradient}},
-        {'type':'dense', 'parameter':{'units':256, 'activation':activation, 'gradient':gradient}},
-        {'type':'dense', 'parameter':{'units':classes, 'activation':activation_softmax(), 'gradient':gradient}}]
+        {'type':'dense', 'parameter':{'units':1024, 'activation':activation, 'weight_random':weight_random, 'gradient':gradient}},
+        {'type':'dense', 'parameter':{'units':512, 'activation':activation, 'weight_random':weight_random, 'gradient':gradient}},
+        {'type':'dense', 'parameter':{'units':256, 'activation':activation, 'weight_random':weight_random, 'gradient':gradient}},
+        {'type':'dense', 'parameter':{'units':classes, 'activation':activation_softmax(), 'weight_random':weight_random, 'gradient':gradient}}]
 
     return layers
 
 
-def template_light(activation, gradient, input_shape, classes):
+def template_light(activation, gradient, weight_random, input_shape, classes):
 
     layers = [
         {'type':'input', 'parameter':{'input_shape':input_shape}},
         {'type':'flatten', 'parameter':{}},
-        {'type':'dense', 'parameter':{'units':1024, 'activation':activation, 'gradient':gradient}},
-        {'type':'dense', 'parameter':{'units':256, 'activation':activation, 'gradient':gradient}},
-        {'type':'dense', 'parameter':{'units':classes, 'activation':activation_softmax(), 'gradient':gradient}}]
+        {'type':'dense', 'parameter':{'units':1024, 'activation':activation, 'weight_random':weight_random, 'gradient':gradient}},
+        {'type':'dense', 'parameter':{'units':256, 'activation':activation, 'weight_random':weight_random, 'gradient':gradient}},
+        {'type':'dense', 'parameter':{'units':classes, 'activation':activation_softmax(), 'weight_random':weight_random, 'gradient':gradient}}]
 
     return layers
 
 
 
-def createModelTemplate(modelType, activationType, gradientType, input_shape, classes):
+def createModelTemplate(modelType, activationType, weightType, weightRandomType, gradientType, input_shape, classes):
 
     modelTypeList = {'light':template_light, 'complex': template_complex}
-    gradientTypeList = {'adam':gradient_adam, 'sgd':gradient_sgd, 'rmsProp':gradient_RMSprop}
     activationTypeList = {'elu':activation_elu, 'relu':activation_relu, 'leakyRelu':activation_leakyRelu, 'sigmoid':activation_sigmoid, 'tanh':activation_tanh, 'linear':activation_linear}
+    gradientTypeList = {'adam':gradient_adam, 'sgd':gradient_sgd, 'rmsProp':gradient_RMSprop}
+    weightRandomTypeList = {'glorot_normal':weight_random_glorot_normal, 'glorot_uniform':weight_random_glorot_uniform, 'he_normal':weight_random_he_uniform, 'he_uniform':weight_random_he_uniform, 'lecun_normal':weight_random_lecun_normal, 'lecun_uniform':weight_random_lecun_uniform}
 
     template = modelTypeList[modelType]
     gradient = gradientTypeList[gradientType]
     activation = activationTypeList[activationType]
+    weightRandom = weightRandomTypeList[weightType + '_' + weightRandomType]
 
-    return template(activation(), gradient(), input_shape, classes)
+    return template(activation(), gradient(), weightRandom(), input_shape, classes)
