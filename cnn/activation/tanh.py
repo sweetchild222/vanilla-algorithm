@@ -9,7 +9,8 @@ class Tanh(ABSActivation):
 
     def forward(self, output):
         output = np.tanh(output)
+        self.last_output = output
         return output
 
     def backward(self, error, y):
-        return 1 - (np.tanh(error))**2
+        return error * (1 - (np.tanh(self.last_output))**2)
