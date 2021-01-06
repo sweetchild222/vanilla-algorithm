@@ -76,7 +76,17 @@ def normalize(x):
 	return x
 
 
-def print_table(table, showColumn):
+showColumnFlag = {}
+
+def print_table(table):
+
+	key_list = sorted(list(table.keys()))
+	tableKey = ''.join(key_list)
+
+	showColumn = False
+	if tableKey not in showColumnFlag:
+	    showColumn = True
+	    showColumnFlag[tableKey] = True
 
 	template = ''
 

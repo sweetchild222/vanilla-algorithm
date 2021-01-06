@@ -53,7 +53,7 @@ def print_oneHotMap(oneHotMap):
         oneHotList.append(map.reshape(-1))
         labelList.append(mapKey)
 
-    print_table({'Label':labelList, 'OneHot':oneHotList}, True)
+    print_table({'Label':labelList, 'OneHot':oneHotList})
 
 
 def print_shapes(train_x, train_y, test_x, test_y):
@@ -61,7 +61,7 @@ def print_shapes(train_x, train_y, test_x, test_y):
     data = ['train_x', 'train_y', 'test_x', 'test_y']
     shape = [train_x.shape, train_y.shape, test_x.shape, test_y.shape]
     table = {'Data':data, 'Shape':shape}
-    print_table(table, True)
+    print_table(table)
 
 
 def print_performance(accuracy, span):
@@ -71,7 +71,7 @@ def print_performance(accuracy, span):
     min_span = '{:.2f}'.format(span.total_seconds() / 60)
     values = [str(accuracy) + ' %', min_span]
     table = {'Performance':performance, 'Values':values}
-    print_table(table, True)
+    print_table(table)
 
 
 def print_arg(model, activation, weight, weightRandom, gradient, classes, epochs, batches, train_dataset_count):
@@ -85,7 +85,7 @@ def print_arg(model, activation, weight, weightRandom, gradient, classes, epochs
     arg = ['classes', 'model', 'activation', 'weight', 'weightRandom', 'gradient', 'epochs', 'train dataset count', 'batches']
     values = [classes, model, activation, weight, weightRandom, gradient, epochs, train_dataset_count, batch_str]
     table = {'Argument':arg, 'Values':values}
-    print_table(table, True)
+    print_table(table)
 
 
 def test(train_x, train_y, test_x, test_y, modelTemplate, epochs, batches, draw):

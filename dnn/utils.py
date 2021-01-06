@@ -28,9 +28,17 @@ def extractData():
 
     return np.array(x), np.array(y), img.shape
 
+showColumnFlag = {}
 
+def print_table(table):
 
-def print_table(table, showColumn):
+	key_list = sorted(list(table.keys()))
+	tableKey = ''.join(key_list)
+
+	showColumn = False
+	if tableKey not in showColumnFlag:
+	    showColumn = True
+	    showColumnFlag[tableKey] = True
 
 	template = ''
 

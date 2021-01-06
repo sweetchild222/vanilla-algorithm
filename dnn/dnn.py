@@ -12,6 +12,7 @@ def encodeOneHot(y):
 
     unique = np.unique(y, return_counts=False)
     oneHotMap = {key : index for index, key in enumerate(unique)}
+
     classes = len(oneHotMap)
     oneHotEncode = [np.eye(classes)[oneHotMap[i]].reshape(classes, 1) for i in y]
 
@@ -56,8 +57,6 @@ def drawPredicts(predicts, feature_max):
     path = 'result/' + datetime.datetime.now().strftime("%m%d_%H%M")
     os.makedirs(path, exist_ok=True)
 
-    showColumn = True
-
     for value in reversed(predicts):
 
         epoch = value['epoch']
@@ -76,8 +75,7 @@ def drawPredicts(predicts, feature_max):
 
         filePath = path + '/epoch_' + str(epoch) + '.png'
 
-        print_table({'Write Path':[filePath]}, showColumn)
-        showColumn = False
+        print_table({'Write Path':[filePath]})
 
         matrixToImage(filePath, matrix)
 
@@ -93,7 +91,7 @@ def print_arg(model, activation, weight, weightRandom, gradient, epochs, batches
     arg = ['model', 'activation', 'weight', 'weightRandom', 'gradient', 'epochs', 'train dataset count', 'batches']
     values = [model, activation, weight, weightRandom, gradient, epochs, train_dataset_count, batch_str]
     table = {'Argument':arg, 'Values':values}
-    print_table(table, True)
+    print_table(table)
 
 def print_performance(span):
 
@@ -102,10 +100,13 @@ def print_performance(span):
     min_span = '{:.2f}'.format(span.total_seconds() / 60)
     values = [min_span]
     table = {'Performance':performance, 'Values':values}
-    print_table(table, True)
+    print_table(table)
 
 
-def predict(test_x, feature_max, predicts, max_epoch, draw_epoch_term, model, epoch):
+def predict(test_x, feature_max, predicts, max_epoch, draw_epoch_term, model, epoch, loss):
+
+    table = {'Epochs':[str(epoch + 1) +'/' + str(max_epoch)], 'Loss':[loss]}
+    print_table(table)
 
     remain = max_epoch % draw_epoch_term
 
@@ -114,6 +115,10 @@ def predict(test_x, feature_max, predicts, max_epoch, draw_epoch_term, model, ep
 
     predict = model.predict(test_x)
     predicts.append({'epoch': epoch, 'predict': predict})
+
+
+
+
 
 def test(train_x, train_y, test_x, modelTemplate, epochs, batches, train_hook_func):
 

@@ -20,8 +20,6 @@ class Model:
         head = None
         tail = None
 
-        showColumn = True
-
         for layer in layerList:
             parameter = layer['parameter']
             parameter['backward_layer'] = backward_layer
@@ -32,8 +30,7 @@ class Model:
             backward_layer = layerClass[type](**parameter)
 
             if self.log == 'info':
-                self.printLayerInfo(backward_layer, parameter, showColumn)
-                showColumn = False
+                self.printLayerInfo(backward_layer, parameter)
 
             if head == None:
                 head = backward_layer
@@ -42,7 +39,7 @@ class Model:
 
         return head, tail
 
-    def printLayerInfo(self, layer, parameter, showColumn):
+    def printLayerInfo(self, layer, parameter):
 
         layerName = layer.__class__.__name__
 
@@ -51,7 +48,7 @@ class Model:
 
         table = {'Layer':[layerName], 'Output Shape':[layer.outputShape()]}
 
-        print_table(table, showColumn)
+        print_table(table)
 
     def build(self):
 
@@ -64,8 +61,6 @@ class Model:
 
     def train(self, x, y, epochs, batches, call_func=None):
 
-        showColumn = True
-
         for epoch in range(epochs):
 
             indexs = random.sample(list(range(0, len(x))), batches)
@@ -75,13 +70,8 @@ class Model:
 
             loss = self.batchTrain(self.head, self.tail, batch_x, batch_y)
 
-            if self.log == 'info':
-                table = {'Epochs':[str(epoch + 1) +'/' + str(epochs)], 'Loss':[loss]}
-                print_table(table, showColumn)
-                showColumn = False
-
             if call_func is not None:
-                call_func(self, epoch + 1)
+                call_func(self, epoch + 1, loss)
 
     def categoricalCrossEntropy(self, predict_y, y):
         return -np.sum(y * np.log2(predict_y))
@@ -171,8 +161,6 @@ class Model:
         count = len(prediction)
         correct_count = 0
 
-        showColumn = True
-
         np.set_printoptions(formatter={'float_kind': lambda x: "{0:0.3f}".format(x)})
 
         for i in range(count):
@@ -183,17 +171,16 @@ class Model:
             correct_count += (1 if p_index == y_index else 0)
 
             if self.log == 'info':
-                self.printTestResult(p_index, i, y_index, prediction, y, showColumn)
-                showColumn = False
+                self.printTestResult(i, p_index, y_index, prediction, y)
 
         accuracy = float(correct_count / count) * 100
 
         return accuracy
 
 
-    def printTestResult(self, i, p_index, y_index, prediction, y, showColumn):
+    def printTestResult(self, i, p_index, y_index, prediction, y):
         correct = 'O' if p_index == y_index else 'X'
         y_label = y[i].reshape(-1).round(decimals=2)
         y_predict = prediction[i].reshape(-1).round(decimals=2)
         table = {'Predict':[y_predict], 'Label':[y_label], 'Correct':[correct]}
-        print_table(table, showColumn)
+        print_table(table)
