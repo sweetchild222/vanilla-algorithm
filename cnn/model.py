@@ -66,8 +66,6 @@ class Model:
 
     def train(self, x, y, epochs, batches):
 
-        classes = y.shape[1]
-
         showColumn = True
 
         for epoch in range(epochs):
@@ -77,7 +75,7 @@ class Model:
             batch_x = x[indexs]
             batch_y = y[indexs]
 
-            loss = self.batchTrain(self.head, self.tail, batch_x, batch_y, classes)
+            loss = self.batchTrain(self.head, self.tail, batch_x, batch_y)
 
             if self.log == 'info':
                 table = {'Epochs':[str(epoch + 1) +'/' + str(epochs)], 'Loss':[loss]}
@@ -87,7 +85,7 @@ class Model:
     def categoricalCrossEntropy(self, predict_y, y):
         return -np.sum(y * np.log2(predict_y))
 
-    def batchTrain(self, head, tail, x, y, classes):
+    def batchTrain(self, head, tail, x, y):
 
         batches = len(x)
 

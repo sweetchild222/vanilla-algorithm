@@ -11,5 +11,5 @@ class Softmax(ABSActivation):
         output = np.exp(output)
         return output / np.sum(output)
 
-    def backward(self, error, y):
-        return (error - y)
+    def backward(self, error, t):
+        return (error - t)
