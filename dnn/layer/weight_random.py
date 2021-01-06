@@ -1,6 +1,5 @@
 import numpy as np
 
-
 def glorotUniform(fab_in, fab_out, size):
     limit = np.sqrt(6/(fab_in + fab_out))
     return np.random.uniform(-limit, limit, size=size)

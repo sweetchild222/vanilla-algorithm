@@ -62,7 +62,7 @@ class Model:
 
             loss = self.batchTrain(self.head, self.tail, batch_x, batch_y)
 
-            if call_func is not None:                
+            if call_func is not None:
                 call_func(self, epoch + 1, loss)
 
     def categoricalCrossEntropy(self, predict_y, y):

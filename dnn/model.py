@@ -2,8 +2,10 @@ from abc import *
 import numpy as np
 from utils import *
 from layer.input import *
-from layer.dense import *
+from layer.convolution import *
+from layer.max_pooling import *
 from layer.flatten import *
+from layer.dense import *
 import random
 
 class Model:
@@ -24,7 +26,7 @@ class Model:
             parameter = layer['parameter']
             parameter['backward_layer'] = backward_layer
 
-            layerClass = {'input':Input, 'dense':Dense, 'flatten':Flatten}
+            layerClass = {'input':Input, 'convolution':Convolution, 'maxPooling':MaxPooling, 'flatten':Flatten, 'dense':Dense}
             type = layer['type']
 
             backward_layer = layerClass[type](**parameter)
@@ -73,7 +75,6 @@ class Model:
         loss = 0
 
         for i in range(batches):
-
             predict_y = self.forward(head, x[i])
 
             loss += self.categoricalCrossEntropy(predict_y, y[i])
@@ -166,3 +167,71 @@ class Model:
         accuracy = float(correct_count / count) * 100
 
         return accuracy
+
+
+    def captureOutputs(self, test_x):
+
+        captureList = {}
+
+        for x in test_x:
+
+            forward_layer = self.head
+
+            output = x
+
+            layerIndex = 0
+
+            while True:
+
+                layerName = forward_layer.__class__.__name__ + '_' + str(layerIndex)
+
+                if layerName not in captureList:
+                    captureList[layerName] = []
+
+                captureList[layerName].append(output.reshape(1, -1))
+
+                output = forward_layer.forward(output)
+
+                next = forward_layer.forwardLayer()
+
+                if next is None:
+                    break
+
+                forward_layer = next
+
+                layerIndex += 1
+
+        return captureList
+
+
+    def captureWeightBias(self):
+
+        captureList = []
+
+        forward_layer = self.head
+
+        layerIndex = 0
+
+        while True:
+
+            layerName = forward_layer.__class__.__name__
+            find = False
+
+            if layerName == 'Convolution' or layerName == 'Dense':
+                find = True
+
+            if find == True:
+                weight = forward_layer.weight
+                bias = forward_layer.bias
+                captureList.append({'layer': layerName + '_' + str(layerIndex), 'weight': weight, 'bias': bias})
+
+            next = forward_layer.forwardLayer()
+
+            if next is None:
+                break
+
+            forward_layer = next
+
+            layerIndex += 1
+
+        return captureList
