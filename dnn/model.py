@@ -14,7 +14,7 @@ class Model:
         self.log = log
         self.labelIndexs = None
 
-    def createModel(self, layerList):
+    def createModel(self, layerList, call_func=None):
 
         backward_layer = None
         head = None
@@ -29,8 +29,8 @@ class Model:
 
             backward_layer = layerClass[type](**parameter)
 
-            if self.log == 'info':
-                self.printLayerInfo(backward_layer, parameter)
+            if call_func is not None:
+                call_func(backward_layer, parameter)
 
             if head == None:
                 head = backward_layer
@@ -39,20 +39,10 @@ class Model:
 
         return head, tail
 
-    def printLayerInfo(self, layer, parameter):
 
-        layerName = layer.__class__.__name__
+    def build(self, call_func=None):
 
-        if 'activation' in parameter:
-            layerName += (' (' + parameter['activation']['type'] + ')')
-
-        table = {'Layer':[layerName], 'Output Shape':[layer.outputShape()]}
-
-        print_table(table)
-
-    def build(self):
-
-        head, tail = self.createModel(self.layerList)
+        head, tail = self.createModel(self.layerList, call_func)
 
         self.head = head
         self.tail = tail
@@ -154,7 +144,7 @@ class Model:
 
         return prediction
 
-    def test(self, x, y):
+    def test(self, x, y, call_func=None):
 
         prediction = self.predict(x)
 
@@ -170,17 +160,9 @@ class Model:
 
             correct_count += (1 if p_index == y_index else 0)
 
-            if self.log == 'info':
-                self.printTestResult(i, p_index, y_index, prediction, y)
+            if call_func is not None:
+                call_func(prediction[i], y[i])
 
         accuracy = float(correct_count / count) * 100
 
         return accuracy
-
-
-    def printTestResult(self, i, p_index, y_index, prediction, y):
-        correct = 'O' if p_index == y_index else 'X'
-        y_label = y[i].reshape(-1).round(decimals=2)
-        y_predict = prediction[i].reshape(-1).round(decimals=2)
-        table = {'Predict':[y_predict], 'Label':[y_label], 'Correct':[correct]}
-        print_table(table)

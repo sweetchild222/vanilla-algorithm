@@ -103,7 +103,7 @@ def print_performance(span):
     print_table(table)
 
 
-def predict(test_x, feature_max, predicts, max_epoch, draw_epoch_term, model, epoch, loss):
+def train_hook(test_x, feature_max, predicts, max_epoch, draw_epoch_term, model, epoch, loss):
 
     table = {'Epochs':[str(epoch + 1) +'/' + str(max_epoch)], 'Loss':[loss]}
     print_table(table)
@@ -117,13 +117,23 @@ def predict(test_x, feature_max, predicts, max_epoch, draw_epoch_term, model, ep
     predicts.append({'epoch': epoch, 'predict': predict})
 
 
+def build_hook(layer, parameter):
+
+    layerName = layer.__class__.__name__
+
+    if 'activation' in parameter:
+        layerName += (' (' + parameter['activation']['type'] + ')')
+
+    table = {'Layer':[layerName], 'Output Shape':[layer.outputShape()]}
+
+    print_table(table)
 
 
 
-def test(train_x, train_y, test_x, modelTemplate, epochs, batches, train_hook_func):
+def test(train_x, train_y, test_x, modelTemplate, epochs, batches, train_hook_func, build_hook_func):
 
     model = Model(modelTemplate, log='info')
-    model.build()
+    model.build(build_hook_func)
 
     start_time = dt.datetime.now()
 
@@ -176,9 +186,11 @@ def main(modelType, activationType, weightType, weightRandomType, gradientType, 
 
     predicts = []
 
-    train_hook_func = partial(predict, test_x, feature_max, predicts, epochs, draw_epoch_term)
+    train_hook_func = partial(train_hook, test_x, feature_max, predicts, epochs, draw_epoch_term)
 
-    train_span = test(train_x, train_y, test_x, modelTemplate, epochs, batches, train_hook_func)
+    build_hook_func = partial(build_hook)
+
+    train_span = test(train_x, train_y, test_x, modelTemplate, epochs, batches, train_hook_func, build_hook_func)
 
     print_performance(train_span)
 

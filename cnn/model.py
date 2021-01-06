@@ -74,7 +74,7 @@ class Model:
 
             if self.log == 'info':
                 table = {'Epochs':[str(epoch + 1) +'/' + str(epochs)], 'Loss':[loss]}
-                print_table(table)                
+                print_table(table)
 
     def categoricalCrossEntropy(self, predict_y, y):
         return -np.sum(y * np.log2(predict_y))
@@ -173,7 +173,7 @@ class Model:
             correct_count += (1 if p_index == y_index else 0)
 
             if self.log == 'info':
-                self.printTestResult(y[i], prediction[i])
+                self.printTestResult(prediction[i], y[i])
 
         accuracy = float(correct_count / count) * 100
 
@@ -247,7 +247,7 @@ class Model:
 
         return captureList
 
-    def printTestResult(self, y, prediction):
+    def printTestResult(self, prediction, y):
 
         p_index = np.argmax(prediction)
         y_index = np.argmax(y)
