@@ -93,6 +93,7 @@ def print_arg(model, activation, weight, weightRandom, gradient, epochs, batches
     table = {'Argument':arg, 'Values':values}
     print_table(table)
 
+
 def print_performance(span):
 
     performance = ['train minute span']
@@ -117,7 +118,7 @@ def train_hook(test_x, feature_max, predicts, max_epoch, draw_epoch_term, model,
     predicts.append({'epoch': epoch, 'predict': predict})
 
 
-def build_hook(layer, parameter):
+def build_hook(model, layer, parameter):
 
     layerName = layer.__class__.__name__
 
@@ -129,8 +130,7 @@ def build_hook(layer, parameter):
     print_table(table)
 
 
-
-def test(train_x, train_y, test_x, modelTemplate, epochs, batches, train_hook_func, build_hook_func):
+def test(train_x, train_y, test_x, modelTemplate, epochs, batches, build_hook_func, train_hook_func):
 
     model = Model(modelTemplate, log='info')
     model.build(build_hook_func)
@@ -190,7 +190,7 @@ def main(modelType, activationType, weightType, weightRandomType, gradientType, 
 
     build_hook_func = partial(build_hook)
 
-    train_span = test(train_x, train_y, test_x, modelTemplate, epochs, batches, train_hook_func, build_hook_func)
+    train_span = test(train_x, train_y, test_x, modelTemplate, epochs, batches, build_hook_func, train_hook_func)
 
     print_performance(train_span)
 

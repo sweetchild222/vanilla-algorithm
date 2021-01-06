@@ -4,6 +4,7 @@ from model_templates import *
 import datetime as dt
 import argparse
 from drawer.drawer import *
+from functools import partial
 
 def makeOneHotMap(train_y, test_y):
 
@@ -88,17 +89,46 @@ def print_arg(model, activation, weight, weightRandom, gradient, classes, epochs
     print_table(table)
 
 
-def test(train_x, train_y, test_x, test_y, modelTemplate, epochs, batches, draw):
+def train_hook(max_epoch, model, epoch, loss):
+
+    table = {'Epochs':[str(epoch + 1) +'/' + str(max_epoch)], 'Loss':[loss]}
+    print_table(table)
+
+def build_hook(model, layer, parameter):
+
+    layerName = layer.__class__.__name__
+
+    if 'activation' in parameter:
+        layerName += (' (' + parameter['activation']['type'] + ')')
+
+    table = {'Layer':[layerName], 'Output Shape':[layer.outputShape()]}
+
+    print_table(table)
+
+
+def test_hook(model, prediction, y):
+
+    p_index = np.argmax(prediction)
+    y_index = np.argmax(y)
+
+    correct = 'O' if p_index == y_index else 'X'
+    y_label = y.reshape(-1).round(decimals=2)
+    y_predict = prediction.reshape(-1).round(decimals=2)
+    table = {'Predict':[y_predict], 'Label':[y_label], 'Correct':[correct]}
+    print_table(table)
+
+
+def test(train_x, train_y, test_x, test_y, modelTemplate, epochs, batches, build_hook_func, train_hook_func, test_hook_func, draw):
 
     model = Model(modelTemplate, log='info')
-    model.build()
+    model.build(build_hook_func)
 
     start_time = dt.datetime.now()
-    model.train(train_x, train_y, epochs, batches)
+    model.train(train_x, train_y, epochs, batches, train_hook_func)
 
     train_span = (dt.datetime.now() - start_time)
 
-    accuracy = model.test(test_x, test_y)
+    accuracy = model.test(test_x, test_y, test_hook_func)
 
     if draw == True:
         outputList = model.captureOutputs(test_x)
@@ -132,7 +162,13 @@ def main(modelType, activationType, weightType, weightRandomType, gradientType, 
 
     modelTemplate = createModelTemplate(modelType, activationType, weightType, weightRandomType, gradientType, train_x.shape[1:], train_y.shape[1])
 
-    accuracy, train_span = test(train_x, train_y, test_x, test_y, modelTemplate, epochs, batches, draw)
+    build_hook_func = partial(build_hook)
+
+    train_hook_func = partial(train_hook, epochs)
+
+    test_hook_func = partial(test_hook)
+
+    accuracy, train_span = test(train_x, train_y, test_x, test_y, modelTemplate, epochs, batches, build_hook_func, train_hook_func, test_hook_func, draw)
 
     print_performance(accuracy, train_span)
 

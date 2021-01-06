@@ -30,7 +30,7 @@ class Model:
             backward_layer = layerClass[type](**parameter)
 
             if call_func is not None:
-                call_func(backward_layer, parameter)
+                call_func(self, backward_layer, parameter)
 
             if head == None:
                 head = backward_layer
@@ -161,7 +161,7 @@ class Model:
             correct_count += (1 if p_index == y_index else 0)
 
             if call_func is not None:
-                call_func(prediction[i], y[i])
+                call_func(self, prediction[i], y[i])
 
         accuracy = float(correct_count / count) * 100
 

@@ -16,7 +16,7 @@ class Model:
         self.log = log
         self.labelIndexs = None
 
-    def createModel(self, layerList):
+    def createModel(self, layerList, call_func=None):
 
         backward_layer = None
         head = None
@@ -31,8 +31,8 @@ class Model:
 
             backward_layer = layerClass[type](**parameter)
 
-            if self.log == 'info':
-                self.printLayerInfo(backward_layer, parameter)
+            if call_func is not None:
+                call_func(self, backward_layer, parameter)
 
             if head == None:
                 head = backward_layer
@@ -41,27 +41,17 @@ class Model:
 
         return head, tail
 
-    def printLayerInfo(self, layer, parameter):
 
-        layerName = layer.__class__.__name__
+    def build(self, call_func=None):
 
-        if 'activation' in parameter:
-            layerName += (' (' + parameter['activation']['type'] + ')')
-
-        table = {'Layer':[layerName], 'Output Shape':[layer.outputShape()]}
-
-        print_table(table)
-
-    def build(self):
-
-        head, tail = self.createModel(self.layerList)
+        head, tail = self.createModel(self.layerList, call_func)
 
         self.head = head
         self.tail = tail
 
         return head, tail
 
-    def train(self, x, y, epochs, batches):
+    def train(self, x, y, epochs, batches, call_func=None):
 
         for epoch in range(epochs):
 
@@ -72,9 +62,8 @@ class Model:
 
             loss = self.batchTrain(self.head, self.tail, batch_x, batch_y)
 
-            if self.log == 'info':
-                table = {'Epochs':[str(epoch + 1) +'/' + str(epochs)], 'Loss':[loss]}
-                print_table(table)
+            if call_func is not None:                
+                call_func(self, epoch + 1, loss)
 
     def categoricalCrossEntropy(self, predict_y, y):
         return -np.sum(y * np.log2(predict_y))
@@ -156,7 +145,7 @@ class Model:
 
         return prediction
 
-    def test(self, x, y):
+    def test(self, x, y, call_func=None):
 
         prediction = self.predict(x)
 
@@ -172,8 +161,8 @@ class Model:
 
             correct_count += (1 if p_index == y_index else 0)
 
-            if self.log == 'info':
-                self.printTestResult(prediction[i], y[i])
+            if call_func is not None:
+                call_func(self, prediction[i], y[i])
 
         accuracy = float(correct_count / count) * 100
 
@@ -246,14 +235,3 @@ class Model:
             layerIndex += 1
 
         return captureList
-
-    def printTestResult(self, prediction, y):
-
-        p_index = np.argmax(prediction)
-        y_index = np.argmax(y)
-
-        correct = 'O' if p_index == y_index else 'X'
-        y_label = y.reshape(-1).round(decimals=2)
-        y_predict = prediction.reshape(-1).round(decimals=2)
-        table = {'Predict':[y_predict], 'Label':[y_label], 'Correct':[correct]}
-        print_table(table)
