@@ -15,7 +15,7 @@ def encodeOneHot(y):
     classes = len(oneHotMap)
     oneHotEncode = [np.eye(classes)[oneHotMap[i]].reshape(classes, 1) for i in y]
 
-    return np.array(oneHotEncode), oneHotMap
+    return np.array(oneHotEncode)
 
 
 def loadTestDataSet(feature_max):
@@ -38,7 +38,7 @@ def loadDataSet():
 
     train_x, train_y, feature_max = extractData()
 
-    train_y, oneHotMap = encodeOneHot(train_y)
+    train_y = encodeOneHot(train_y)
 
     test_x = loadTestDataSet(feature_max)
 
@@ -48,7 +48,7 @@ def loadDataSet():
     train_x = all_x[0:len(train_x)]
     test_x = all_x[-len(test_x):]
 
-    return train_x, train_y, test_x, oneHotMap, feature_max
+    return train_x, train_y, test_x, feature_max
 
 
 def drawPredicts(predicts, feature_max):
@@ -161,13 +161,13 @@ def parse_arg():
 
 def main(modelType, activationType, weightType, weightRandomType, gradientType, epochs, batches, draw_epoch_term):
 
-    train_x, train_y, test_x, oneHotMap, feature_max = loadDataSet()
+    train_x, train_y, test_x, feature_max = loadDataSet()
 
     print_arg(modelType, activationType, weightType, weightRandomType, gradientType, epochs, batches, len(train_x))
 
     batches = adjust_batches(batches, len(train_x))
 
-    modelTemplate = createModelTemplate(modelType, activationType, weightType, weightRandomType, gradientType, train_x.shape[1:], len(oneHotMap))
+    modelTemplate = createModelTemplate(modelType, activationType, weightType, weightRandomType, gradientType, train_x.shape[1:], train_y.shape[1])
 
     predicts = []
 

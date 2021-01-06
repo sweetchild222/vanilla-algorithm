@@ -130,7 +130,7 @@ def main(modelType, activationType, weightType, weightRandomType, gradientType, 
 
     train_y, test_y = encodeOneHot(oneHotMap, train_y, test_y)
 
-    modelTemplate = createModelTemplate(modelType, activationType, weightType, weightRandomType, gradientType, train_x.shape[1:], len(oneHotMap))
+    modelTemplate = createModelTemplate(modelType, activationType, weightType, weightRandomType, gradientType, train_x.shape[1:], train_y.shape[1])
 
     accuracy, train_span = test(train_x, train_y, test_x, test_y, modelTemplate, epochs, batches, draw)
 
