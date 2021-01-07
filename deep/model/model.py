@@ -11,7 +11,7 @@ class Model:
     def __init__(self, layerList):
         self.layerList = layerList
         self.head = None
-        self.tail = None        
+        self.tail = None
         self.labelIndexs = None
 
     def createModel(self, layerList, call_func=None):
@@ -61,7 +61,7 @@ class Model:
             loss = self.batchTrain(self.head, self.tail, batch_x, batch_y)
 
             if call_func is not None:
-                call_func(self, epoch + 1, loss)
+                call_func(self, epoch + 1, epochs, loss)
 
     def categoricalCrossEntropy(self, predict_y, y):
         return -np.sum(y * np.log2(predict_y))

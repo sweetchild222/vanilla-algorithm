@@ -91,9 +91,9 @@ def print_arg(model, activation, weight, weightRandom, gradient, classes, epochs
     print_table(table)
 
 
-def train_hook(max_epoch, model, epoch, loss):
+def train_hook(model, epoch, epochs, loss):
 
-    table = {'Epochs':[str(epoch) +'/' + str(max_epoch)], 'Loss':[loss]}
+    table = {'Epochs':[str(epoch) +'/' + str(epochs)], 'Loss':[loss]}
     print_table(table)
 
 def build_hook(model, layer, parameter):
@@ -166,7 +166,7 @@ def main(modelType, activationType, weightType, weightRandomType, gradientType, 
 
     build_hook_func = partial(build_hook)
 
-    train_hook_func = partial(train_hook, epochs)
+    train_hook_func = partial(train_hook)
 
     test_hook_func = partial(test_hook)
 

@@ -104,12 +104,12 @@ def print_performance(span):
     print_table(table)
 
 
-def train_hook(test_x, feature_max, predicts, max_epoch, draw_epoch_term, model, epoch, loss):
+def train_hook(test_x, feature_max, predicts, draw_epoch_term, model, epoch, epochs, loss):
 
-    table = {'Epochs':[str(epoch) +'/' + str(max_epoch)], 'Loss':[loss]}
+    table = {'Epochs':[str(epoch) +'/' + str(epochs)], 'Loss':[loss]}
     print_table(table)
 
-    remain = max_epoch % draw_epoch_term
+    remain = epochs % draw_epoch_term
 
     if ((epoch % draw_epoch_term) - remain) != 0:
         return
@@ -186,7 +186,7 @@ def main(modelType, activationType, weightType, weightRandomType, gradientType, 
 
     predicts = []
 
-    train_hook_func = partial(train_hook, test_x, feature_max, predicts, epochs, draw_epoch_term)
+    train_hook_func = partial(train_hook, test_x, feature_max, predicts, draw_epoch_term)
 
     build_hook_func = partial(build_hook)
 
