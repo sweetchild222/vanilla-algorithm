@@ -1,6 +1,6 @@
-from cnn.loader import *
-from cnn.drawer import *
-from cnn.model_templates import *
+from cnn_lib.loader import *
+from cnn_lib.drawer import *
+from cnn_lib.model_templates import *
 from model.model import *
 from util.util import *
 import argparse
@@ -33,7 +33,7 @@ def encodeOneHot(oneHotMap, train_y, test_y):
 
 def loadDataSet(classes):
 
-    train_x, train_y, test_x, test_y = extractMNIST(classes, 'cnn/mnist/train', 'cnn/mnist/test')
+    train_x, train_y, test_x, test_y = extractMNIST(classes, 'cnn_lib/mnist/train', 'cnn_lib/mnist/test')
 
     all_x = np.vstack((train_x, test_x))
     all_x -= np.mean(all_x)

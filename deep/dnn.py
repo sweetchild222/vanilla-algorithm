@@ -1,6 +1,6 @@
-from dnn.drawer import *
-from dnn.loader import *
-from dnn.model_templates import *
+from dnn_lib.drawer import *
+from dnn_lib.loader import *
+from dnn_lib.model_templates import *
 from model.model import *
 from util.util import *
 import argparse

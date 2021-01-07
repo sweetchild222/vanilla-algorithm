@@ -3,7 +3,7 @@ import numpy as np
 
 def extractData():
 
-    img = np.array(Image.open('dnn/data/train.png')).astype(np.float32)
+    img = np.array(Image.open('dnn_lib/data/train.png')).astype(np.float32)
 
     (height, width) = img.shape
 
