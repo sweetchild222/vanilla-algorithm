@@ -42,8 +42,6 @@ def print_performance(span):
 
 def train_hook(model, epoch, epochs, loss):
 
-    print('----')
-
     table = {'Epochs':[str(epoch) +'/' + str(epochs)], 'Loss':[loss]}
     print_table(table)
 
