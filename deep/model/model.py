@@ -5,6 +5,7 @@ from model.layer.convolution import *
 from model.layer.max_pooling import *
 from model.layer.flatten import *
 from model.layer.dense import *
+from model.layer.basicRNN import *
 import random
 
 class Model:
@@ -24,7 +25,7 @@ class Model:
             parameter = layer['parameter']
             parameter['backward_layer'] = backward_layer
 
-            layerClass = {'input':Input, 'convolution':Convolution, 'maxPooling':MaxPooling, 'flatten':Flatten, 'dense':Dense}
+            layerClass = {'input':Input, 'convolution':Convolution, 'maxPooling':MaxPooling, 'flatten':Flatten, 'dense':Dense, 'basicRNN':BasicRNN}
             type = layer['type']
 
             backward_layer = layerClass[type](**parameter)
@@ -76,7 +77,7 @@ class Model:
         loss = 0
 
         for i in range(batches):
-            
+
             predict_y = self.forward(head, x[i])
 
             loss += self.categoricalCrossEntropy(predict_y, y[i])
