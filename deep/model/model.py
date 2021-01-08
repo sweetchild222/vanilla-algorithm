@@ -49,16 +49,19 @@ class Model:
 
         return head, tail
 
-    def train(self, x, y, epochs, batches, call_func=None):
+    def train(self, train_x, train_y, epochs, batches, call_func=None):
 
         for epoch in range(epochs):
 
-            indexs = random.sample(list(range(0, len(x))), batches)
+            x = train_x
+            y = train_x
 
-            batch_x = x[indexs]
-            batch_y = y[indexs]
+            if batches > 0:
+                indexs = random.sample(list(range(0, len(x))), batches)
+                x = train_x[indexs]
+                y = train_y[indexs]
 
-            loss = self.batchTrain(self.head, self.tail, batch_x, batch_y)
+            loss = self.batchTrain(self.head, self.tail, x, y)
 
             if call_func is not None:
                 call_func(self, epoch + 1, epochs, loss)
@@ -73,6 +76,7 @@ class Model:
         loss = 0
 
         for i in range(batches):
+            
             predict_y = self.forward(head, x[i])
 
             loss += self.categoricalCrossEntropy(predict_y, y[i])
