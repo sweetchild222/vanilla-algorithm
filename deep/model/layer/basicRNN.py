@@ -12,13 +12,22 @@ class BasicRNN(ABSLayer):
         self.units = units
         self.activation = createActivation(activation)
 
-        self.weight = self.createWeight(weight_random, (units, self.input_shape[0]))
+        self.weight_x = self.createWeight(weight_random, (units, self.input_shape[0]))
+        self.weight_h = self.createWeight(weight_random, (units, units))
         self.bias = np.zeros((units, 1))
 
-        self.last_input = None
+        self.h_list = []
+        self.input_list = []
+        self.h_size = 25
+        self.h_oldest = None
+        self.dhprev = np.zeros((self.units, 1))
+        self.error_list = []
 
-        self.gradient = createGradient(gradient)
-        self.gradient.setShape(self.weight.shape, self.bias.shape)
+        self.gradient_x = createGradient(gradient)
+        self.gradient_x.setShape(self.weight_x.shape, self.bias.shape)
+
+        self.gradient_h = createGradient(gradient)
+        self.gradient_h.setShape(self.weight_h.shape, self.bias.shape)
 
     def createWeight(self, weight_random, size):
 
@@ -29,32 +38,69 @@ class BasicRNN(ABSLayer):
 
     def forward(self, input):
 
-        self.last_input = input
+        self.input_list.append(input)
 
-        output = self.weight.dot(input) + self.bias
+        if len(self.input_list) > self.h_size:
+            self.input_list.pop(0)
 
-        return self.activation.forward(output)
+        h_prev = np.zeros((self.units, 1)) if len(self.h_list) == 0 else self.h_list[len(self.h_list) - 1]
+
+        h_next = np.tanh(np.dot(self.weight_x, input) + np.dot(self.weight_h, h_prev) + self.bias)
+
+        self.h_list.append(h_next)
+
+        if len(self.h_list) > self.h_size:
+            self.h_oldest = self.h_list.pop(0)
+
+        #print('forward', len(self.input_list), ', ',len(self.h_list))
+
+        return h_next
 
     def backward(self, error, y):
 
-        error = self.activation.backward(error, y)
+        #index = (self.h_index + 1) if (self.h_index + 1) < len(self.h) else 0
 
-        grain_weight = error.dot(self.last_input.T)
-        grain_bias = np.sum(error, axis = 1).reshape(self.bias.shape)
+        self.error_list.append(error)
 
-        self.gradient.put(grain_weight, grain_bias)
 
-        return self.weight.T.dot(error)
+
+        #dh = error + self.dhnext
+        #dhraw = (1 - self.h_list[len(self.h_list) - 1]**2) * dh
+
+        if self.h_oldest is not None:
+            for i in range(len(self.error_list) - 1, -1, -1):
+                #print(len(self.error_list))
+                #print(len(self.h_list))
+                dh = self.error_list[i] + self.dhprev
+                dhraw = (1 - self.h_list[i - 1]**2) * dh
+                self.dhprev = np.dot(self.weight_h.T, dhraw)
+
+            grain_bias_x = dhraw
+            grain_weight_x = np.dot(dhraw, self.input_list[0].T)
+            grain_weight_h = np.dot(dhraw, self.h_oldest.T)
+
+            self.gradient_x.put(grain_weight_x, grain_bias_x)
+            self.gradient_h.put(grain_weight_h, grain_bias_x)
+
+        if len(self.error_list) > self.h_size:
+            self.error_list.pop(0)
+
+        #self.dhnext = np.dot(self.weight_h.T, dhraw)
+
+        return np.dot(self.weight_x.T, error)
 
     def outputShape(self):
-        return (self.units, )
+        return (self.units, self.units)
 
     def updateGradient(self):
 
-        deltaWeight = self.gradient.deltaWeight()
-        detalBias = self.gradient.deltaBias()
+        deltaWeight_x = self.gradient_x.deltaWeight()
+        detalBias_x = self.gradient_x.deltaBias()
 
-        self.weight -= deltaWeight
-        self.bias -= detalBias
+        self.weight_x -= deltaWeight_x
+        self.bias -= detalBias_x
 
-        self.gradient.reset()
+        self.weight_h -= self.gradient_h.deltaWeight()
+
+        self.gradient_x.reset()
+        self.gradient_h.reset()
