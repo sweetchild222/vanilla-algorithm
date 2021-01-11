@@ -55,7 +55,7 @@ class Model:
         for epoch in range(epochs):
 
             x = train_x
-            y = train_x
+            y = train_y
 
             if batches > 0:
                 indexs = random.sample(list(range(0, len(x))), batches)

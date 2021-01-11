@@ -108,7 +108,7 @@ def build_hook(model, layer, parameter):
     print_table(table)
 
 
-def test_hook(model, prediction, y):
+def test_hook(model, x, prediction, y):
 
     p_index = np.argmax(prediction)
     y_index = np.argmax(y)

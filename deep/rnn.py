@@ -79,6 +79,8 @@ def test(data, oneHotMap, modelTemplate, epochs, build_hook_func, train_hook_fun
         x = encodeOneHot(data[index:index + length], len(oneHotMap))
         y = encodeOneHot(data[index + 1:index + length + 1], len(oneHotMap))
 
+        x = x[:len(x)-(len(x) - len(y))]
+
         x_list.append(x)
         y_list.append(y)
         index += (length)
