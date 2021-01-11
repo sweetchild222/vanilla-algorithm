@@ -71,6 +71,9 @@ class Convolution(ABSLayer):
 
         return self.activation.forward(output)
 
+    def start(self):
+        pass
+
     def backward(self, error, y):
 
         error = self.activation.backward(error, y)

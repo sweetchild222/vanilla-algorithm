@@ -28,6 +28,10 @@ class ABSLayer(metaclass=ABCMeta):
         pass
 
     @abstractmethod
+    def start(self):
+            pass
+
+    @abstractmethod
     def outputShape(self):
         pass
 

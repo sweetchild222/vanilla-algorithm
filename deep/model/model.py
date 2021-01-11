@@ -76,6 +76,8 @@ class Model:
 
         loss = 0
 
+        self.start(head)
+
         for i in range(batches):
 
             predict_y = self.forward(head, x[i])
@@ -87,6 +89,21 @@ class Model:
         self.updateGradient(head)
 
         return loss / batches
+
+    def start(self, head):
+
+        forward_layer = head
+
+        while True:
+            forward_layer.start()
+
+            next = forward_layer.forwardLayer()
+
+            if next is None:
+                return
+
+            forward_layer = next
+
 
 
     def forward(self, head, input):

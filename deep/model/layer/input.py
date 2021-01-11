@@ -7,6 +7,9 @@ class Input(ABSLayer):
         super(Input, self).__init__(backward_layer)
         self.input_shape = input_shape
 
+    def start(self):
+        pass
+
     def forward(self, input):
         return input
 

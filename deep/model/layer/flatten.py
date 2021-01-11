@@ -9,6 +9,9 @@ class Flatten(ABSLayer):
     def __init__(self, backward_layer):
         super(Flatten, self).__init__(backward_layer)
 
+    def start(self):
+        pass
+
     def forward(self, input):
         return input.reshape((-1, 1))
 

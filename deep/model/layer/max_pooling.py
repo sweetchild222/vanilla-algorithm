@@ -11,6 +11,9 @@ class MaxPooling(ABSLayer):
         self.strides = pool_size if strides == None else strides
         self.last_input = None
 
+    def start(self):
+        pass
+
     def forward(self, input):
 
         self.last_input = input

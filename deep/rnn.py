@@ -83,6 +83,7 @@ def test(data, oneHotMap, modelTemplate, epochs, build_hook_func, train_hook_fun
 
         y = encodeOneHot(data[index + 1:index + length + 1], len(oneHotMap))
 
+
         #print(y.shape)
         x_list.append(x)
         y_list.append(y)
@@ -92,7 +93,9 @@ def test(data, oneHotMap, modelTemplate, epochs, build_hook_func, train_hook_fun
     train_x = np.concatenate(x_list)
     train_y = np.concatenate(y_list)
 
-    model.train(train_x, train_y, 120, 0, train_hook_func)
+    model.train(train_x, train_y, epochs, 0, train_hook_func)
+
+
 
     train_span = (dt.datetime.now() - start_time)
 
