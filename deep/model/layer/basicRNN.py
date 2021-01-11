@@ -18,9 +18,9 @@ class BasicRNN(ABSLayer):
 
         self.h_list = []
         self.input_list = []
-        self.h_size = 25
-        self.h_oldest = None
-        self.dhprev = np.zeros((self.units, 1))
+        self.h_size = 4
+        #self.h_oldest = None
+        #self.dhprev = np.zeros((self.units, 1))
         self.error_list = []
 
         self.gradient_x = createGradient(gradient)
@@ -40,8 +40,7 @@ class BasicRNN(ABSLayer):
 
         self.input_list.append(input)
 
-        if len(self.input_list) > self.h_size:
-            self.input_list.pop(0)
+        #if len(self.input_list) > self.h_size:
 
         h_prev = np.zeros((self.units, 1)) if len(self.h_list) == 0 else self.h_list[len(self.h_list) - 1]
 
@@ -49,8 +48,8 @@ class BasicRNN(ABSLayer):
 
         self.h_list.append(h_next)
 
-        if len(self.h_list) > self.h_size:
-            self.h_oldest = self.h_list.pop(0)
+        #if len(self.h_list) > self.h_size:
+            #self.h_oldest = self.h_list.pop(0)
 
         #print('forward', len(self.input_list), ', ',len(self.h_list))
 
@@ -59,32 +58,35 @@ class BasicRNN(ABSLayer):
     def backward(self, error, y):
 
         #index = (self.h_index + 1) if (self.h_index + 1) < len(self.h) else 0
-
         self.error_list.append(error)
-
-
 
         #dh = error + self.dhnext
         #dhraw = (1 - self.h_list[len(self.h_list) - 1]**2) * dh
 
-        if self.h_oldest is not None:
+        if len(self.h_list) >= self.h_size:
+            dhprev = np.zeros((self.units, 1))
+
             for i in range(len(self.error_list) - 1, -1, -1):
+
+                #print('index : ', i)
                 #print(len(self.error_list))
                 #print(len(self.h_list))
-                dh = self.error_list[i] + self.dhprev
-                dhraw = (1 - self.h_list[i - 1]**2) * dh
-                self.dhprev = np.dot(self.weight_h.T, dhraw)
+                dh = self.error_list[i] + dhprev
+                dhraw = (1 - self.h_list[i]**2) * dh
+                dhprev = np.dot(self.weight_h.T, dhraw)
+
+            h_oldest = self.h_list.pop(0)
+            input = self.input_list.pop(0)
+            self.error_list.pop(0)
 
             grain_bias_x = dhraw
-            grain_weight_x = np.dot(dhraw, self.input_list[0].T)
-            grain_weight_h = np.dot(dhraw, self.h_oldest.T)
+            grain_weight_x = np.dot(dhraw, input.T)
+            grain_weight_h = np.dot(dhraw, h_oldest.T)
 
             self.gradient_x.put(grain_weight_x, grain_bias_x)
             self.gradient_h.put(grain_weight_h, grain_bias_x)
 
-        if len(self.error_list) > self.h_size:
-            self.error_list.pop(0)
-
+        #if len(self.error_list) > self.h_size:
         #self.dhnext = np.dot(self.weight_h.T, dhraw)
 
         return np.dot(self.weight_x.T, error)

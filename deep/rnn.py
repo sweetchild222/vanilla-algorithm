@@ -58,6 +58,7 @@ def build_hook(model, layer, parameter):
     print_table(table)
 
 
+
 def test(data, oneHotMap, modelTemplate, epochs, build_hook_func, train_hook_func):
 
     model = Model(modelTemplate)
@@ -74,16 +75,24 @@ def test(data, oneHotMap, modelTemplate, epochs, build_hook_func, train_hook_fun
 
     while index < data_length:
         length = word_length if data_length > (index + word_length) else data_length % word_length
+
+        #print('start : ', index)
+        #print('end : ', (index + length))
+
         x = encodeOneHot(data[index:index + length], len(oneHotMap))
+
         y = encodeOneHot(data[index + 1:index + length + 1], len(oneHotMap))
+
+        #print(y.shape)
         x_list.append(x)
         y_list.append(y)
-        index += length
+        index += (length)
+        index += 1
 
     train_x = np.concatenate(x_list)
     train_y = np.concatenate(y_list)
 
-    model.train(train_x, train_y, 10, 0, train_hook_func)
+    model.train(train_x, train_y, 120, 0, train_hook_func)
 
     train_span = (dt.datetime.now() - start_time)
 

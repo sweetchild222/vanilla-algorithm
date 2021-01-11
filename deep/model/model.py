@@ -165,7 +165,7 @@ class Model:
             correct_count += (1 if p_index == y_index else 0)
 
             if call_func is not None:
-                call_func(self, prediction[i], y[i])
+                call_func(self, x[i], prediction[i], y[i])
 
         accuracy = float(correct_count / count) * 100
 
