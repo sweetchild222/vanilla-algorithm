@@ -13,27 +13,29 @@ class ABSLayer(metaclass=ABCMeta):
             self.input_shape = backward_layer.outputShape()
             backward_layer.forward_layer = self
 
+
     def forwardLayer(self):
         return self.forward_layer
 
+
     def backwardLayer(self):
         return self.backward_layer
+
 
     @abstractmethod
     def forward(self, input):
         pass
 
+
     @abstractmethod
     def backward(self, error, y):
         pass
 
-    @abstractmethod
-    def start(self):
-            pass
 
     @abstractmethod
     def outputShape(self):
         pass
+
 
     @abstractmethod
     def updateGradient(self):

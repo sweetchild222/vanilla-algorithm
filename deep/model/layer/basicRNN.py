@@ -16,19 +16,13 @@ class BasicRNN(ABSLayer):
         self.weight_h = self.createWeight(weight_random, (units, units))
         self.bias = np.zeros((units, 1))
 
-        #self.h_list = [np.zeros((self.units, 1))]
-        #self.input_list = []
-        #self.h_size = 5
-        #self.h_oldest = None
-        #self.dhprev = np.zeros((self.units, 1))
-        #self.error_list = []
-
         self.gradient_x = createGradient(gradient)
         self.gradient_x.setShape(self.weight_x.shape, self.bias.shape)
 
         self.gradient_h = createGradient(gradient)
         self.gradient_h.setShape(self.weight_h.shape, self.bias.shape)
 
+        self.initHidden()
 
     def createWeight(self, weight_random, size):
 
@@ -37,11 +31,13 @@ class BasicRNN(ABSLayer):
 
         return createWeightRandom(weight_random, fab_in, fab_out, size)
 
-    def start(self):
+
+    def initHidden(self):
         self.h_list = [np.zeros((self.units, 1))]
         self.input_list = []
         self.h_size = 8
         self.error_list = []
+
 
     def forward(self, input):
 
@@ -55,6 +51,7 @@ class BasicRNN(ABSLayer):
 
         return h_next
 
+
     def backward(self, error, y):
 
         self.error_list.append(error)
@@ -62,12 +59,7 @@ class BasicRNN(ABSLayer):
         if len(self.h_list) >= self.h_size:
             dhprev = np.zeros((self.units, 1))
 
-            #print('h : ', len(self.h_list))
-            #print('e : ', len(self.error_list))
-
             for i in range(len(self.error_list) - 1, -1, -1):
-                #print(len(self.error_list))
-                #print(i)
                 dh = self.error_list[i] + dhprev
                 dhraw = (1 - self.h_list[i + 1]**2) * dh
                 dhprev = np.dot(self.weight_h.T, dhraw)
@@ -88,10 +80,14 @@ class BasicRNN(ABSLayer):
 
         return np.dot(self.weight_x.T, error)
 
+
     def outputShape(self):
         return (self.units, self.units)
 
+
     def updateGradient(self):
+
+
 
         deltaWeight_x = self.gradient_x.deltaWeight()
         detalBias_x = self.gradient_x.deltaBias()
@@ -103,3 +99,4 @@ class BasicRNN(ABSLayer):
 
         self.gradient_x.reset()
         self.gradient_h.reset()
+        self.initHidden()

@@ -22,6 +22,7 @@ class Convolution(ABSLayer):
         self.last_input = None
         self.activation = createActivation(activation)
 
+
     def createWeight(self, weight_random, size):
 
         (filters, colors, kernel_height, kernel_width) = size
@@ -33,6 +34,7 @@ class Convolution(ABSLayer):
 
         return createWeightRandom(weight_random, fab_in, fab_out, size)
 
+
     def appendPadding(self, input):
 
         size = self.padding_size
@@ -42,6 +44,7 @@ class Convolution(ABSLayer):
             rows.append(np.pad(i, ((size[0], size[0]),(size[1], size[1])), 'constant', constant_values=0))
 
         return np.array(rows)
+
 
     def forward(self, input):
 
@@ -71,8 +74,6 @@ class Convolution(ABSLayer):
 
         return self.activation.forward(output)
 
-    def start(self):
-        pass
 
     def backward(self, error, y):
 
@@ -104,9 +105,11 @@ class Convolution(ABSLayer):
 
         return output
 
+
     def paddingSize(self, kernel_height, kernel_width):
 
         return ((kernel_height - 1) // 2, (kernel_width - 1) // 2)
+
 
     def outputShape(self):
 
@@ -119,6 +122,7 @@ class Convolution(ABSLayer):
         calc_shape = ((numerator_height // stride_y) + 1, (numerator_width // stride_x) + 1)
 
         return (filters,) + calc_shape
+
 
     def updateGradient(self):
 

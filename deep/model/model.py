@@ -76,8 +76,6 @@ class Model:
 
         loss = 0
 
-        self.start(head)
-
         for i in range(batches):
 
             predict_y = self.forward(head, x[i])

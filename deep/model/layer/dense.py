@@ -20,6 +20,7 @@ class Dense(ABSLayer):
         self.gradient = createGradient(gradient)
         self.gradient.setShape(self.weight.shape, self.bias.shape)
 
+
     def createWeight(self, weight_random, size):
 
         fab_out = size[0]
@@ -27,8 +28,6 @@ class Dense(ABSLayer):
 
         return createWeightRandom(weight_random, fab_in, fab_out, size)
 
-    def start(self):
-        pass
 
     def forward(self, input):
 
@@ -37,6 +36,7 @@ class Dense(ABSLayer):
         output = self.weight.dot(input) + self.bias
 
         return self.activation.forward(output)
+
 
     def backward(self, error, y):
 
@@ -49,8 +49,10 @@ class Dense(ABSLayer):
 
         return self.weight.T.dot(error)
 
+
     def outputShape(self):
         return (self.units, )
+
 
     def updateGradient(self):
         deltaWeight = self.gradient.deltaWeight()

@@ -76,15 +76,9 @@ def test(data, oneHotMap, modelTemplate, epochs, build_hook_func, train_hook_fun
     while index < data_length:
         length = word_length if data_length > (index + word_length) else data_length % word_length
 
-        #print('start : ', index)
-        #print('end : ', (index + length))
-
         x = encodeOneHot(data[index:index + length], len(oneHotMap))
-
         y = encodeOneHot(data[index + 1:index + length + 1], len(oneHotMap))
 
-
-        #print(y.shape)
         x_list.append(x)
         y_list.append(y)
         index += (length)
@@ -94,8 +88,6 @@ def test(data, oneHotMap, modelTemplate, epochs, build_hook_func, train_hook_fun
     train_y = np.concatenate(y_list)
 
     model.train(train_x, train_y, epochs, 0, train_hook_func)
-
-
 
     train_span = (dt.datetime.now() - start_time)
 
@@ -110,7 +102,7 @@ def parse_arg():
     parser.add_argument('-a', dest='activationType', type=str, default='elu', choices=['linear', 'relu', 'elu', 'leakyRelu', 'sigmoid', 'tanh'], help='sample activation type (default: relu)')
     parser.add_argument('-w', dest='weightType', type=str, default='he', choices=['lecun', 'glorot', 'he'], help='initial weight type (default: he)')
     parser.add_argument('-r', dest='weightRandomType', type=str, default='normal', choices=['uniform', 'normal'], help='initial weight random type (default: normal)')
-    parser.add_argument('-e', dest='epochs', type=int, default=1000, help='epochs (default: 1000)')
+    parser.add_argument('-e', dest='epochs', type=int, default=100, help='epochs (default: 1000)')
 
     args = parser.parse_args()
 

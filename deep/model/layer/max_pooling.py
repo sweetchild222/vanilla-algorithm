@@ -11,8 +11,6 @@ class MaxPooling(ABSLayer):
         self.strides = pool_size if strides == None else strides
         self.last_input = None
 
-    def start(self):
-        pass
 
     def forward(self, input):
 
@@ -40,9 +38,11 @@ class MaxPooling(ABSLayer):
 
         return output
 
+
     def nanargmax(self, array):
         idx = np.nanargmax(array)
         return np.unravel_index(idx, array.shape)
+
 
     def backward(self, error, y):
 
@@ -66,11 +66,13 @@ class MaxPooling(ABSLayer):
 
         return output
 
+
     def outputShape(self):
 
         calc_shape = ((self.input_shape[1] // self.strides[0]), (self.input_shape[2] // self.strides[1]))
 
         return (self.input_shape[0],) + calc_shape
+
 
     def updateGradient(self):
         pass
