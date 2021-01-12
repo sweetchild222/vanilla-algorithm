@@ -64,3 +64,45 @@ def extractMNIST(classes, trainPath, testPath):
 	test_x, test_y = loadMNISTFiles(testPath, lables)
 
 	return train_x, train_y, test_x, test_y
+
+
+def makeOneHotMap(train_y, test_y):
+
+    labels = np.hstack((train_y, test_y))
+
+    unique = np.unique(labels, return_counts=False)
+
+    return {key : index for index, key in enumerate(unique)}
+
+
+def encodeOneHot(oneHotMap, train_y, test_y):
+
+    labels = np.hstack((train_y, test_y))
+
+    classes = len(oneHotMap)
+
+    labels = [np.eye(classes)[oneHotMap[y]].reshape(classes, 1) for y in labels]
+    labels = np.array(labels)
+
+    train = labels[0:len(train_y)]
+    test = labels[-len(test_y):]
+
+    return train, test
+
+
+def loadDataSet(classes):
+
+    train_x, train_y, test_x, test_y = extractMNIST(classes, 'cnn_lib/mnist/train', 'cnn_lib/mnist/test')
+
+    all_x = np.vstack((train_x, test_x))
+    all_x -= np.mean(all_x)
+    all_x /= np.std(all_x)
+
+    train_x = all_x[0:len(train_x)]
+    test_x = all_x[-len(test_x):]
+
+    oneHotMap = makeOneHotMap(train_y, test_y)
+
+    train_y, test_y = encodeOneHot(oneHotMap, train_y, test_y)
+
+    return train_x, train_y, test_x, test_y, oneHotMap

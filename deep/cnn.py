@@ -7,42 +7,6 @@ import argparse
 import datetime as dt
 from functools import partial
 
-def makeOneHotMap(train_y, test_y):
-
-    labels = np.hstack((train_y, test_y))
-
-    unique = np.unique(labels, return_counts=False)
-
-    return {key : index for index, key in enumerate(unique)}
-
-
-def encodeOneHot(oneHotMap, train_y, test_y):
-
-    labels = np.hstack((train_y, test_y))
-
-    classes = len(oneHotMap)
-
-    labels = [np.eye(classes)[oneHotMap[y]].reshape(classes, 1) for y in labels]
-    labels = np.array(labels)
-
-    train = labels[0:len(train_y)]
-    test = labels[-len(test_y):]
-
-    return train, test
-
-
-def loadDataSet(classes):
-
-    train_x, train_y, test_x, test_y = extractMNIST(classes, 'cnn_lib/mnist/train', 'cnn_lib/mnist/test')
-
-    all_x = np.vstack((train_x, test_x))
-    all_x -= np.mean(all_x)
-    all_x /= np.std(all_x)
-
-    train_x = all_x[0:len(train_x)]
-    test_x = all_x[-len(test_x):]
-
-    return train_x, train_y, test_x, test_y
 
 def print_oneHotMap(oneHotMap):
 
@@ -57,14 +21,6 @@ def print_oneHotMap(oneHotMap):
         labelList.append(mapKey)
 
     print_table({'Label':labelList, 'OneHot':oneHotList})
-
-
-def print_shapes(train_x, train_y, test_x, test_y):
-
-    data = ['train_x', 'train_y', 'test_x', 'test_y']
-    shape = [train_x.shape, train_y.shape, test_x.shape, test_y.shape]
-    table = {'Data':data, 'Shape':shape}
-    print_table(table)
 
 
 def print_performance(accuracy, span):
@@ -150,19 +106,13 @@ def adjust_batches(batches, train_dataset_len):
 
 def main(modelType, activationType, weightType, weightRandomType, gradientType, classes, epochs, batches, shuffle, draw):
 
-    train_x, train_y, test_x, test_y = loadDataSet(classes)
+    train_x, train_y, test_x, test_y, oneHotMap = loadDataSet(classes)
 
     print_arg(modelType, activationType, weightType, weightRandomType, gradientType, classes, epochs, batches, shuffle, len(train_x))
 
     batches = adjust_batches(batches, len(train_x))
 
-    print_shapes(train_x, train_y, test_x, test_y)
-
-    oneHotMap = makeOneHotMap(train_y, test_y)
-
     print_oneHotMap(oneHotMap)
-
-    train_y, test_y = encodeOneHot(oneHotMap, train_y, test_y)
 
     modelTemplate = createModelTemplate(modelType, activationType, weightType, weightRandomType, gradientType, train_x.shape[1:], train_y.shape[1])
 
