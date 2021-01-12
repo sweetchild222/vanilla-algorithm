@@ -15,6 +15,7 @@ class Model:
         self.tail = None
         self.labelIndexs = None
 
+
     def createModel(self, layerList, call_func=None):
 
         backward_layer = None
@@ -50,22 +51,36 @@ class Model:
 
         return head, tail
 
-    def train(self, train_x, train_y, epochs, batches, call_func=None):
+    def shuffle(self, train_x, train_y):
+
+        shuffle_indexs = np.arange(train_x.shape[0])
+        np.random.shuffle(shuffle_indexs)
+
+        return train_x[shuffle_indexs], train_y[shuffle_indexs]
+
+    def train(self, train_x, train_y, epochs, batches, shuffle, call_func=None):
 
         for epoch in range(epochs):
 
-            x = train_x
-            y = train_y
+            length = train_x.shape[0]
 
-            if batches > 0:
-                indexs = random.sample(list(range(0, len(x))), batches)
-                x = train_x[indexs]
-                y = train_y[indexs]
+            if shuffle:
+                train_x, train_y = self.shuffle(train_x, train_y)
 
-            loss = self.batchTrain(self.head, self.tail, x, y)
+            loss = 0
+            i = 0
+
+            for b in range(0, length, batches):
+
+                batch_x = train_x[b : b + batches]
+                batch_y = train_y[b : b + batches]
+
+                loss += self.batchTrain(self.head, self.tail, batch_x, batch_y)
+                i += 1
 
             if call_func is not None:
-                call_func(self, epoch + 1, epochs, loss)
+                call_func(self, epoch + 1, epochs, loss / i)
+
 
     def categoricalCrossEntropy(self, predict_y, y):
         return -np.sum(y * np.log2(predict_y))

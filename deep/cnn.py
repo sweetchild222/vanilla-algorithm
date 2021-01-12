@@ -77,7 +77,7 @@ def print_performance(accuracy, span):
     print_table(table)
 
 
-def print_arg(model, activation, weight, weightRandom, gradient, classes, epochs, batches, train_dataset_count):
+def print_arg(model, activation, weight, weightRandom, gradient, classes, epochs, batches, shuffle, train_dataset_count):
 
     reduced = batches > train_dataset_count
 
@@ -85,8 +85,8 @@ def print_arg(model, activation, weight, weightRandom, gradient, classes, epochs
 
     batch_str = str(batches) + (' (reduced)' if reduced else '')
 
-    arg = ['classes', 'model', 'activation', 'weight', 'weightRandom', 'gradient', 'epochs', 'train dataset count', 'batches']
-    values = [classes, model, activation, weight, weightRandom, gradient, epochs, train_dataset_count, batch_str]
+    arg = ['classes', 'model', 'activation', 'weight', 'weightRandom', 'gradient', 'epochs', 'train dataset count', 'batches', 'shuffle']
+    values = [classes, model, activation, weight, weightRandom, gradient, epochs, train_dataset_count, batch_str, shuffle]
     table = {'Argument':arg, 'Values':values}
     print_table(table)
 
@@ -95,6 +95,7 @@ def train_hook(model, epoch, epochs, loss):
 
     table = {'Epochs':[str(epoch) +'/' + str(epochs)], 'Loss':[loss]}
     print_table(table)
+
 
 def build_hook(model, layer, parameter):
 
@@ -120,19 +121,20 @@ def test_hook(model, x, prediction, y):
     print_table(table)
 
 
-def test(train_x, train_y, test_x, test_y, modelTemplate, epochs, batches, build_hook_func, train_hook_func, test_hook_func, draw):
+def test(train_x, train_y, test_x, test_y, modelTemplate, epochs, batches, shuffle, build_hook_func, train_hook_func, test_hook_func, draw):
 
     model = Model(modelTemplate)
     model.build(build_hook_func)
 
     start_time = dt.datetime.now()
-    model.train(train_x, train_y, epochs, batches, train_hook_func)
+
+    model.train(train_x, train_y, epochs, batches, shuffle, train_hook_func)
 
     train_span = (dt.datetime.now() - start_time)
 
     accuracy = model.test(test_x, test_y, test_hook_func)
 
-    if draw == True:
+    if draw:
         outputList = model.captureOutputs(test_x)
         drawOutput(outputList)
         weightBiasList = model.captureWeightBias()
@@ -146,11 +148,11 @@ def adjust_batches(batches, train_dataset_len):
     return batches if train_dataset_len > batches else train_dataset_len
 
 
-def main(modelType, activationType, weightType, weightRandomType, gradientType, classes, epochs, batches, draw):
+def main(modelType, activationType, weightType, weightRandomType, gradientType, classes, epochs, batches, shuffle, draw):
 
     train_x, train_y, test_x, test_y = loadDataSet(classes)
 
-    print_arg(modelType, activationType, weightType, weightRandomType, gradientType, classes, epochs, batches, len(train_x))
+    print_arg(modelType, activationType, weightType, weightRandomType, gradientType, classes, epochs, batches, shuffle, len(train_x))
 
     batches = adjust_batches(batches, len(train_x))
 
@@ -170,7 +172,7 @@ def main(modelType, activationType, weightType, weightRandomType, gradientType, 
 
     test_hook_func = partial(test_hook)
 
-    accuracy, train_span = test(train_x, train_y, test_x, test_y, modelTemplate, epochs, batches, build_hook_func, train_hook_func, test_hook_func, draw)
+    accuracy, train_span = test(train_x, train_y, test_x, test_y, modelTemplate, epochs, batches, shuffle, build_hook_func, train_hook_func, test_hook_func, draw)
 
     print_performance(accuracy, train_span)
 
@@ -184,10 +186,10 @@ def parse_arg():
     parser.add_argument('-a', dest='activationType', type=str, default='elu', choices=['linear', 'relu', 'elu', 'leakyRelu', 'sigmoid', 'tanh'], help='sample activation type (default: relu)')
     parser.add_argument('-w', dest='weightType', type=str, default='he', choices=['lecun', 'glorot', 'he'], help='initial weight type (default: he)')
     parser.add_argument('-r', dest='weightRandomType', type=str, default='normal', choices=['uniform', 'normal'], help='initial weight random type (default: normal)')
-    parser.add_argument('-e', dest='epochs', type=int, default=60, help='epochs (default: 60)')
+    parser.add_argument('-e', dest='epochs', type=int, default=5, help='epochs (default: 5)')
     parser.add_argument('-b', dest='batches', type=int, help='batches (default: classes x 3)')
-    parser.add_argument('-d', dest='draw', type=bool, default=False, help='draw result (default: False)')
-
+    parser.add_argument('--suffle-off', dest='shuffle', action='store_false', help='shuffle (default: True)')
+    parser.add_argument('--d', dest='draw', action='store_true', help='draw result (default: False)')
     args = parser.parse_args()
 
     if args.classes < 1 or args.classes > 10:
@@ -208,4 +210,4 @@ if __name__ == "__main__":
     args = parse_arg()
 
     if args != None:
-        main(args.modelType, args.activationType, args.weightType, args.weightRandomType, args.gradientType, args.classes, args.epochs, args.batches, args.draw)
+        main(args.modelType, args.activationType, args.weightType, args.weightRandomType, args.gradientType, args.classes, args.epochs, args.batches, args.shuffle, args.draw)

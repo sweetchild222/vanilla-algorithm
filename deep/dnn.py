@@ -80,7 +80,7 @@ def drawPredicts(predicts, feature_max):
         matrixToImage(path, fileName, matrix)
 
 
-def print_arg(model, activation, weight, weightRandom, gradient, epochs, batches, train_dataset_count):
+def print_arg(model, activation, weight, weightRandom, gradient, epochs, batches, shuffle, train_dataset_count):
 
     reduced = batches > train_dataset_count
 
@@ -88,8 +88,8 @@ def print_arg(model, activation, weight, weightRandom, gradient, epochs, batches
 
     batch_str = str(batches) + (' (reduced)' if reduced else '')
 
-    arg = ['model', 'activation', 'weight', 'weightRandom', 'gradient', 'epochs', 'train dataset count', 'batches']
-    values = [model, activation, weight, weightRandom, gradient, epochs, train_dataset_count, batch_str]
+    arg = ['model', 'activation', 'weight', 'weightRandom', 'gradient', 'epochs', 'train dataset count', 'batches', 'shuffle']
+    values = [model, activation, weight, weightRandom, gradient, epochs, train_dataset_count, batch_str, shuffle]
     table = {'Argument':arg, 'Values':values}
     print_table(table)
 
@@ -130,14 +130,14 @@ def build_hook(model, layer, parameter):
     print_table(table)
 
 
-def test(train_x, train_y, test_x, modelTemplate, epochs, batches, build_hook_func, train_hook_func):
+def test(train_x, train_y, test_x, modelTemplate, epochs, batches, shuffle, build_hook_func, train_hook_func):
 
     model = Model(modelTemplate)
     model.build(build_hook_func)
 
     start_time = dt.datetime.now()
 
-    model.train(train_x, train_y, epochs, batches, train_hook_func)
+    model.train(train_x, train_y, epochs, batches, shuffle, train_hook_func)
 
     train_span = (dt.datetime.now() - start_time)
 
@@ -157,9 +157,10 @@ def parse_arg():
     parser.add_argument('-a', dest='activationType', type=str, default='elu', choices=['linear', 'relu', 'elu', 'leakyRelu', 'sigmoid', 'tanh'], help='sample activation type (default: relu)')
     parser.add_argument('-w', dest='weightType', type=str, default='he', choices=['lecun', 'glorot', 'he'], help='initial weight type (default: he)')
     parser.add_argument('-r', dest='weightRandomType', type=str, default='normal', choices=['uniform', 'normal'], help='initial weight random type (default: normal)')
-    parser.add_argument('-e', dest='epochs', type=int, default=1000, help='epochs (default: 1000)')
+    parser.add_argument('-e', dest='epochs', type=int, default=50, help='epochs (default: 50)')
     parser.add_argument('-b', dest='batches', type=int, default=100, help='batches (default: 100)')
-    parser.add_argument('-d', dest='draw_epoch_term', type=int, default=200, help='draw epoch term (default: 200)')
+    parser.add_argument('-d', dest='draw_epoch_term', type=int, default=10, help='draw epoch term (default: 10)')
+    parser.add_argument('--suffle-off', dest='shuffle', action='store_false', help='shuffle (default: True)')
 
     args = parser.parse_args()
 
@@ -174,11 +175,11 @@ def parse_arg():
     return args
 
 
-def main(modelType, activationType, weightType, weightRandomType, gradientType, epochs, batches, draw_epoch_term):
+def main(modelType, activationType, weightType, weightRandomType, gradientType, epochs, batches, shuffle, draw_epoch_term):
 
     train_x, train_y, test_x, feature_max = loadDataSet()
 
-    print_arg(modelType, activationType, weightType, weightRandomType, gradientType, epochs, batches, len(train_x))
+    print_arg(modelType, activationType, weightType, weightRandomType, gradientType, epochs, batches, shuffle, len(train_x))
 
     batches = adjust_batches(batches, len(train_x))
 
@@ -190,7 +191,7 @@ def main(modelType, activationType, weightType, weightRandomType, gradientType, 
 
     build_hook_func = partial(build_hook)
 
-    train_span = test(train_x, train_y, test_x, modelTemplate, epochs, batches, build_hook_func, train_hook_func)
+    train_span = test(train_x, train_y, test_x, modelTemplate, epochs, batches, shuffle, build_hook_func, train_hook_func)
 
     print_performance(train_span)
 
@@ -202,4 +203,4 @@ if __name__ == "__main__":
     args = parse_arg()
 
     if args != None:
-        main(args.modelType, args.activationType, args.weightType, args.weightRandomType, args.gradientType, args.epochs, args.batches, args.draw_epoch_term)
+        main(args.modelType, args.activationType, args.weightType, args.weightRandomType, args.gradientType, args.epochs, args.batches, args.shuffle, args.draw_epoch_term)
