@@ -70,11 +70,14 @@ class Model:
     def categoricalCrossEntropy(self, predict_y, y):
         return -np.sum(y * np.log2(predict_y))
 
+
     def batchTrain(self, head, tail, x, y):
 
         batches = len(x)
 
         loss = 0
+
+        self.beginBatch(head)
 
         for i in range(batches):
 
@@ -84,16 +87,17 @@ class Model:
 
             self.backward(tail, predict_y, y[i])
 
-        self.updateGradient(head)
+        self.endBatch(head)
 
         return loss / batches
 
-    def start(self, head):
+
+    def beginBatch(self, head):
 
         forward_layer = head
 
         while True:
-            forward_layer.start()
+            forward_layer.beginBatch()
 
             next = forward_layer.forwardLayer()
 
@@ -103,6 +107,19 @@ class Model:
             forward_layer = next
 
 
+    def endBatch(self, head):
+
+        forward_layer = head
+
+        while True:
+            forward_layer.endBatch()
+
+            next = forward_layer.forwardLayer()
+
+            if next is None:
+                return
+
+            forward_layer = next
 
     def forward(self, head, input):
 
@@ -135,21 +152,6 @@ class Model:
                 break
 
             backward_layer = next
-
-
-    def updateGradient(self, head):
-
-        forward_layer = head
-
-        while True:
-            forward_layer.updateGradient()
-
-            next = forward_layer.forwardLayer()
-
-            if next is None:
-                break
-
-            forward_layer = next
 
 
     def predict(self, test_x):

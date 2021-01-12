@@ -111,6 +111,21 @@ class Convolution(ABSLayer):
         return ((kernel_height - 1) // 2, (kernel_width - 1) // 2)
 
 
+    def beginBatch(self):
+        pass
+
+
+    def endBatch(self):
+
+        deltaWeight = self.gradient.deltaWeight()
+        deltaBias = self.gradient.deltaBias()
+
+        self.weight -= deltaWeight
+        self.bias -= deltaBias
+
+        self.gradient.reset()
+
+
     def outputShape(self):
 
         (filters, colors, kernel_height, kernel_width) = self.weight.shape
@@ -122,14 +137,3 @@ class Convolution(ABSLayer):
         calc_shape = ((numerator_height // stride_y) + 1, (numerator_width // stride_x) + 1)
 
         return (filters,) + calc_shape
-
-
-    def updateGradient(self):
-
-        deltaWeight = self.gradient.deltaWeight()
-        deltaBias = self.gradient.deltaBias()
-
-        self.weight -= deltaWeight
-        self.bias -= deltaBias
-
-        self.gradient.reset()

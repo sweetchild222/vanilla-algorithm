@@ -18,9 +18,13 @@ class Flatten(ABSLayer):
         return error.reshape(self.input_shape)
 
 
+    def beginBatch(self):
+        pass
+
+
+    def endBatch(self):
+        pass
+
+
     def outputShape(self):
         return (reduce(operator.mul, self.input_shape), )
-
-
-    def updateGradient(self):
-        pass

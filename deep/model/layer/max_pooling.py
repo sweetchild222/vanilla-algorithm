@@ -1,7 +1,6 @@
 import numpy as np
 from model.layer.abs_layer import *
 
-
 class MaxPooling(ABSLayer):
 
     def __init__(self, pool_size, strides, backward_layer):
@@ -67,12 +66,16 @@ class MaxPooling(ABSLayer):
         return output
 
 
+    def beginBatch(self):
+        pass
+
+
+    def endBatch(self):
+        pass
+
+
     def outputShape(self):
 
         calc_shape = ((self.input_shape[1] // self.strides[0]), (self.input_shape[2] // self.strides[1]))
 
         return (self.input_shape[0],) + calc_shape
-
-
-    def updateGradient(self):
-        pass

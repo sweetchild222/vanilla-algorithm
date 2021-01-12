@@ -22,7 +22,6 @@ class BasicRNN(ABSLayer):
         self.gradient_h = createGradient(gradient)
         self.gradient_h.setShape(self.weight_h.shape, self.bias.shape)
 
-        self.initHidden()
 
     def createWeight(self, weight_random, size):
 
@@ -30,13 +29,6 @@ class BasicRNN(ABSLayer):
         fab_in = size[1]
 
         return createWeightRandom(weight_random, fab_in, fab_out, size)
-
-
-    def initHidden(self):
-        self.h_list = [np.zeros((self.units, 1))]
-        self.input_list = []
-        self.h_size = 8
-        self.error_list = []
 
 
     def forward(self, input):
@@ -81,13 +73,13 @@ class BasicRNN(ABSLayer):
         return np.dot(self.weight_x.T, error)
 
 
-    def outputShape(self):
-        return (self.units, self.units)
+    def beginBatch(self):
+        self.h_list = [np.zeros((self.units, 1))]
+        self.input_list = []
+        self.h_size = 8
+        self.error_list = []
 
-
-    def updateGradient(self):
-
-
+    def endBatch(self):
 
         deltaWeight_x = self.gradient_x.deltaWeight()
         detalBias_x = self.gradient_x.deltaBias()
@@ -99,4 +91,7 @@ class BasicRNN(ABSLayer):
 
         self.gradient_x.reset()
         self.gradient_h.reset()
-        self.initHidden()
+
+
+    def outputShape(self):
+        return (self.units, self.units)

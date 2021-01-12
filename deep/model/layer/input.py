@@ -16,9 +16,13 @@ class Input(ABSLayer):
         return error
 
 
+    def beginBatch(self):
+        pass
+
+
+    def endBatch(self):
+        pass
+
+
     def outputShape(self):
         return self.input_shape
-
-
-    def updateGradient(self):
-        pass

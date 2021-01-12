@@ -50,11 +50,12 @@ class Dense(ABSLayer):
         return self.weight.T.dot(error)
 
 
-    def outputShape(self):
-        return (self.units, )
+    def beginBatch(self):
+        pass
 
 
-    def updateGradient(self):
+    def endBatch(self):
+
         deltaWeight = self.gradient.deltaWeight()
         detalBias = self.gradient.deltaBias()
 
@@ -62,3 +63,7 @@ class Dense(ABSLayer):
         self.bias -= detalBias
 
         self.gradient.reset()
+
+
+    def outputShape(self):
+        return (self.units, )

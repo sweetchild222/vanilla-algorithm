@@ -33,10 +33,15 @@ class ABSLayer(metaclass=ABCMeta):
 
 
     @abstractmethod
-    def outputShape(self):
+    def beginBatch(self):
         pass
 
 
     @abstractmethod
-    def updateGradient(self):
+    def endBatch(self):
+        pass
+
+
+    @abstractmethod
+    def outputShape(self):
         pass
