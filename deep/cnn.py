@@ -114,7 +114,7 @@ def main(modelType, activationType, weightType, weightRandomType, gradientType, 
 
     print_oneHotMap(oneHotMap)
 
-    modelTemplate = createModelTemplate(modelType, activationType, weightType, weightRandomType, gradientType, train_x.shape[1:], train_y.shape[1])
+    modelTemplate = createModelTemplate(modelType, activationType, weightType, weightRandomType, gradientType, train_x.shape[1:], len(oneHotMap))
 
     build_hook_func = partial(build_hook)
 

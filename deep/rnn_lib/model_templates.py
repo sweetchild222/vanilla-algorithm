@@ -68,8 +68,7 @@ def template_complex(activation, weight_random, gradient, input_shape, classes):
 def template_light(activation, weight_random, gradient, input_shape, classes):
 
     layers = [
-        {'type':'input', 'parameter':{'input_shape':input_shape}},
-        {'type':'flatten', 'parameter':{}},
+        {'type':'input', 'parameter':{'input_shape':input_shape}},    
         {'type':'basicRNN', 'parameter':{'units':256, 'activation':activation, 'weight_random':weight_random, 'gradient':gradient}},
         {'type':'dense', 'parameter':{'units':128, 'activation':activation, 'weight_random':weight_random, 'gradient':gradient}},
         {'type':'dense', 'parameter':{'units':classes, 'activation':activation_softmax(), 'weight_random':weight_random, 'gradient':gradient}}]

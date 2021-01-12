@@ -9,19 +9,6 @@ from functools import partial
 import datetime as dt
 import os
 
-def encodeOneHot(data, classes):
-
-    oneHotEncode = [np.eye(classes)[i].reshape(classes, 1) for i in data]
-
-    return np.array(oneHotEncode)
-
-
-def loadDataSet():
-
-    data, charMap = extractData()
-
-    return data, charMap
-
 
 def print_arg(model, activation, weight, weightRandom, gradient, epochs, data_length):
 
@@ -59,37 +46,14 @@ def build_hook(model, layer, parameter):
 
 
 
-def test(data, oneHotMap, modelTemplate, epochs, build_hook_func, train_hook_func):
+def test(train_x, train_y, oneHotmap, modelTemplate, epochs, build_hook_func, train_hook_func):
 
     model = Model(modelTemplate)
     model.build(build_hook_func)
 
-    word_length = 25
-    index = 0
-    data_length = len(data)
-
     start_time = dt.datetime.now()
 
-    x_list = []
-    y_list = []
-
-    while index < data_length:
-        length = word_length if data_length > (index + word_length) else data_length % word_length
-
-        x = encodeOneHot(data[index:index + length], len(oneHotMap))
-        y = encodeOneHot(data[index + 1:index + length + 1], len(oneHotMap))
-
-        x = x[:len(x)-(len(x) - len(y))]
-
-        x_list.append(x)
-        y_list.append(y)
-        index += (length)
-        index += 1
-
-    train_x = np.concatenate(x_list)
-    train_y = np.concatenate(y_list)
-
-    model.train(train_x, train_y, epochs, word_length, False, train_hook_func)
+    #model.train(train_x, train_y, epochs, word_length, False, train_hook_func)
 
     train_span = (dt.datetime.now() - start_time)
 
@@ -116,17 +80,17 @@ def parse_arg():
 
 def main(modelType, activationType, weightType, weightRandomType, gradientType, epochs):
 
-    data, oneHotMap = loadDataSet()
+    train_x, train_y, oneHotmap = loadDataSet(25)
 
-    print_arg(modelType, activationType, weightType, weightRandomType, gradientType, epochs, data.shape[0])
+    print_arg(modelType, activationType, weightType, weightRandomType, gradientType, epochs, train_x.shape[0])
 
-    modelTemplate = createModelTemplate(modelType, activationType, weightType, weightRandomType, gradientType, (len(oneHotMap), ), len(oneHotMap))
+    modelTemplate = createModelTemplate(modelType, activationType, weightType, weightRandomType, gradientType, train_x.shape[1:], len(oneHotmap))
 
     build_hook_func = partial(build_hook)
 
     train_hook_func = partial(train_hook)
 
-    train_span = test(data, oneHotMap, modelTemplate, epochs, build_hook_func, train_hook_func)
+    train_span = test(train_x, train_y, oneHotmap, modelTemplate, epochs, build_hook_func, train_hook_func)
 
     print_performance(train_span)
 
