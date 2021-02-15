@@ -1,8 +1,7 @@
 import numpy as np
 
 def activation(y):
-    y[y <= 0] = 0
-    y[y > 0] = 1
+    y = 1 / (1 + np.exp(-y))
     return y
 
 def h1(x):
