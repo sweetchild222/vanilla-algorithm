@@ -9,7 +9,7 @@ def train(X, T, learning_rate, iteration):
     bias = np.zeros(outputNodes)
 
     for i in range(iteration):
-        error = test(weight, bias, X) - T
+        error = test(X, weight, bias) - T
 
         weight_delta, bias_delta = gradient(X, error, learning_rate)
 
@@ -19,7 +19,7 @@ def train(X, T, learning_rate, iteration):
     return weight, bias
 
 
-def test(weight, bias, X):
+def test(X, weight, bias):
 
     return np.dot(X, weight) + bias
 
@@ -44,6 +44,6 @@ print('bias  : ', bias)
 
 X_test = np.array([[9.0, 40]])
 
-predicted_Y = test(weight, bias, X_test)
+predicted_Y = test(X_test, weight, bias)
 
 print('X : ', X_test, ', predicted Y : ', predicted_Y)
