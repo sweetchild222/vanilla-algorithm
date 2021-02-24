@@ -25,39 +25,37 @@ def train(X, T, learning_rate, iterate):
     inputNodes = X.shape[-1]
     outputNodes = T.shape[-1]
 
-    weight = np.random.normal(size=(inputNodes, outputNodes))
-    bias = np.zeros((outputNodes))
+    h1_weight = np.random.normal(size=(inputNodes, outputNodes))
+    h1_bias = np.zeros((outputNodes))
 
     for i in range(iterate):
 
-        y1 = linear_forward(X, weight, bias)
+        y1 = linear_forward(X, h1_weight, h1_bias)
         s1 = activation_forward(y1)
 
         error = (s1 - T)
 
-        if (i % 1000) is 0:
-            print(i, ' : ', s1)
-            #print('T : ', T)
-            #print('S1 : ', s1)
-            #print('e : '  , error)
-            #print(i, ' :', loss)
-
         error = activation_backward(error, s1)
 
-        weight_delta = np.dot(X.T, error)
-        bias_delta = np.sum(error, axis=0)
+        h1_weight_delta = np.dot(X.T, error)
+        h1_bias_delta = np.sum(error, axis=0)
 
-        error = linear_backward(error, weight)
+        error = linear_backward(error, h1_weight_delta)
 
-        weight -= (learning_rate * weight_delta)
-        bias -= (learning_rate * bias_delta)
+        h1_weight -= (learning_rate * h1_weight_delta)
+        h1_bias -= (learning_rate * h1_bias_delta)
 
-    return weight, bias
+    return h1_weight, h1_bias
 
-X = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])
-T = np.array([[0], [1], [1], [0]])
+X = np.array([[3, 2]])
+T = np.array([[1]])
 
-weight, bias = train(X, T, learning_rate = 0.01, iterate = 10000)
+h1_weight, h1_bias = train(X, T, learning_rate = 0.01, iterate = 10000)
 
-print('weight  : ', weight)
-print('bias  : ', bias)
+print('weight  : ', h1_weight)
+print('bias  : ', h1_bias)
+
+y1 = linear_forward(X, h1_weight, h1_bias)
+s1 = activation_forward(y1)
+
+print(s1)
