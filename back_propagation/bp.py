@@ -25,10 +25,14 @@ def train(X, T, learning_rate, iterate):
     inputNodes = X.shape[-1]
     outputNodes = T.shape[-1]
 
-    h1_weight = np.random.normal(size=(inputNodes, outputNodes))
+    #h1_weight = np.random.normal(size=(inputNodes, outputNodes))
+    h1_weight = np.zeros((inputNodes, outputNodes))
     h1_bias = np.zeros((outputNodes))
 
+
     for i in range(iterate):
+
+        a = -1
 
         y1 = linear_forward(X, h1_weight, h1_bias)
         s1 = activation_forward(y1)
@@ -47,13 +51,13 @@ def train(X, T, learning_rate, iterate):
 
     return h1_weight, h1_bias
 
-X = np.array([[3, 2]])
+X = np.array([[5]])
 T = np.array([[1]])
 
-h1_weight, h1_bias = train(X, T, learning_rate = 0.0001, iterate = 100000)
+h1_weight, h1_bias = train(X, T, learning_rate = 0.2, iterate = 4)
 
-print('weight  : ', h1_weight)
-print('bias  : ', h1_bias)
+#print('weight  : ', h1_weight)
+#print('bias  : ', h1_bias)
 
 y1 = linear_forward(X, h1_weight, h1_bias)
 s1 = activation_forward(y1)
