@@ -11,10 +11,10 @@ def train(X, T, learning_rate, iteration):
     for i in range(iteration):
         error = test(X, weight, bias) - T
 
-        weight_delta, bias_delta = gradient(X, error, learning_rate)
+        weight_delta, bias_delta = gradient(X, error)
 
-        weight -= weight_delta
-        bias -= bias_delta
+        weight -= (learning_rate * weight_delta)
+        bias -= (learning_rate * bias_delta)
 
     return weight, bias
 
@@ -24,12 +24,10 @@ def test(X, weight, bias):
     return np.dot(X, weight) + bias
 
 
-def gradient(X, error, learning_rate):
+def gradient(X, error):
 
-    lr = learning_rate
-
-    weight_delta = lr * np.dot(X.T, error)
-    bias_delta = lr * np.sum(error, axis=0)
+    weight_delta = np.dot(X.T, error)
+    bias_delta = np.sum(error, axis=0)
 
     return weight_delta, bias_delta
 
