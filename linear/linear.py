@@ -26,7 +26,7 @@ def test(X, weight, bias):
 
 def gradient(X, error, learning_rate):
 
-    lr = learning_rate * (1 / len(error))
+    lr = learning_rate
 
     weight_delta = lr * np.dot(X.T, error)
     bias_delta = lr * np.sum(error, axis=0)
