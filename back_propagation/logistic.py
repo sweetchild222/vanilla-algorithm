@@ -51,7 +51,7 @@ def train(X, T, learning_rate, iterate):
 X = np.array([[5]])
 T = np.array([[1]])
 
-h1_weight, h1_bias = train(X, T, learning_rate = 0.2, iterate = 4)
+h1_weight, h1_bias = train(X, T, learning_rate = 0.2, iterate = 100)
 
 #print('weight  : ', h1_weight)
 #print('bias  : ', h1_bias)
