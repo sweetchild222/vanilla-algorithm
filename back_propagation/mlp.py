@@ -42,6 +42,11 @@ def train(X, T, learning_rate, iterate):
         y2 = linear_forward(s1, h2_weight, h2_bias)
         s2 = activation_forward(y2)
 
+        g = np.average((s2 - T)**2)
+
+        if (i % 500) == 0:
+            print(i, ' mse : ', g)
+
         error = (s2 - T)
 
         error = activation_backward(error, s2)
@@ -49,7 +54,7 @@ def train(X, T, learning_rate, iterate):
         h2_weight_delta = np.dot(s1.T, error)
         h2_bias_delta = np.sum(error, axis=0)
 
-        error = linear_backward(error, h2_weight_delta)
+        error = linear_backward(error, h2_weight)
 
         h2_weight -= (learning_rate * h2_weight_delta)
         h2_bias -= (learning_rate * h2_bias_delta)
@@ -59,7 +64,7 @@ def train(X, T, learning_rate, iterate):
         h1_weight_delta = np.dot(X.T, error)
         h1_bias_delta = np.sum(error, axis=0)
 
-        error = linear_backward(error, h1_weight_delta)
+        error = linear_backward(error, h1_weight)
 
         h1_weight -= (learning_rate * h1_weight_delta)
         h1_bias -= (learning_rate * h1_bias_delta)
@@ -69,7 +74,7 @@ def train(X, T, learning_rate, iterate):
 X = np.array([[0, 0], [1, 1]])
 T = np.array([[0], [1]])
 
-h1_weight, h1_bias, h2_weight, h2_bias = train(X, T, learning_rate = 0.01, iterate = 50000)
+h1_weight, h1_bias, h2_weight, h2_bias = train(X, T, learning_rate = 0.01, iterate = 5000)
 
 y1 = linear_forward(X, h1_weight, h1_bias)
 s1 = activation_forward(y1)
@@ -77,4 +82,4 @@ s1 = activation_forward(y1)
 y2 = linear_forward(s1, h2_weight, h2_bias)
 s2 = activation_forward(y2)
 
-print(s2)
+print('test : ', s2)

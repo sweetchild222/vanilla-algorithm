@@ -26,37 +26,39 @@ def train(X, T, learning_rate, iterate):
     outputNodes = T.shape[-1]
 
     #h1_weight = np.random.normal(size=(inputNodes, outputNodes))
-    h1_weight = np.zeros((inputNodes, outputNodes))
-    h1_bias = np.zeros((outputNodes))
+    weight = np.zeros((inputNodes, outputNodes))
+    bias = np.zeros((outputNodes))
 
     for i in range(iterate):
 
-        y1 = linear_forward(X, h1_weight, h1_bias)
-        s1 = activation_forward(y1)
+        y = linear_forward(X, weight, bias)
+        s = activation_forward(y)
 
-        error = (s1 - T)
+        g = np.average((s - T)**2)
 
-        error = activation_backward(error, s1)
+        if (i % 100) == 0:
+            print(i, ' mse : ', g)
 
-        h1_weight_delta = np.dot(X.T, error)
-        h1_bias_delta = np.sum(error, axis=0)
+        error = (s - T)
 
-        error = linear_backward(error, h1_weight_delta)
+        error = activation_backward(error, s)
 
-        h1_weight -= (learning_rate * h1_weight_delta)
-        h1_bias -= (learning_rate * h1_bias_delta)
+        weight_delta = np.dot(X.T, error)
+        bias_delta = np.sum(error, axis=0)
 
-    return h1_weight, h1_bias
+        error = linear_backward(error, weight)
+
+        weight -= (learning_rate * weight_delta)
+        bias -= (learning_rate * bias_delta)
+
+    return weight, bias
 
 X = np.array([[5]])
 T = np.array([[1]])
 
-h1_weight, h1_bias = train(X, T, learning_rate = 0.2, iterate = 100)
+weight, bias = train(X, T, learning_rate = 0.2, iterate = 500)
 
-#print('weight  : ', h1_weight)
-#print('bias  : ', h1_bias)
+y = linear_forward(X, weight, bias)
+s = activation_forward(y)
 
-y1 = linear_forward(X, h1_weight, h1_bias)
-s1 = activation_forward(y1)
-
-print(s1)
+print('test : ', s)
