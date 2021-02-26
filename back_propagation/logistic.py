@@ -29,10 +29,7 @@ def train(X, T, learning_rate, iterate):
     h1_weight = np.zeros((inputNodes, outputNodes))
     h1_bias = np.zeros((outputNodes))
 
-
     for i in range(iterate):
-
-        a = -1
 
         y1 = linear_forward(X, h1_weight, h1_bias)
         s1 = activation_forward(y1)
