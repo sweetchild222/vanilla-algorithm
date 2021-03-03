@@ -5,9 +5,13 @@ def linear_forward(x, weight, bias):
 
     return np.dot(x, weight) + bias
 
-def linear_backward(error, weight):
+def linear_backward(input, error, weight, bias):
 
-    return np.dot(error, weight.T)
+    weight_delta = np.dot(X.T, error)
+    bias_delta = np.sum(error, axis=0)
+    back_layer_error = np.dot(error, weight.T)
+
+    return back_layer_error, weight_delta, bias_delta
 
 
 def train(X, T, learning_rate, iterate):
@@ -26,10 +30,7 @@ def train(X, T, learning_rate, iterate):
         print(i, ' mse : ', g)
         error = (y - T)
 
-        weight_delta = np.dot(X.T, error)
-        bias_delta = np.sum(error, axis=0)
-
-        error = linear_backward(error, weight)
+        error, weight_delta, bias_delta = linear_backward(X, error, weight, bias)
 
         weight -= (learning_rate * weight_delta)
         bias -= (learning_rate * bias_delta)
