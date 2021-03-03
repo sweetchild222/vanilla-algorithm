@@ -7,6 +7,10 @@ def activation_forward(x):
 
     return 1 / (1 + np.exp(-x))
 
+def padding(x):
+
+    pad_size = 1
+    return np.pad(x, ((0, 0), (pad_size, pad_size), (pad_size, pad_size)), 'constant', constant_values=0)
 
 def convolution_forward(input, weight, bias):
 
@@ -57,6 +61,9 @@ def convolution_backward(input, error, weight, bias):
     (kernel_height, kernel_width) = weight.shape
     (stride_y, stride_x) = (1, 1)
 
+    back_layer_error = np.zeros(input.shape)
+    batch_weight = np.array([weight] * batches)
+
     w_delta = np.zeros((batches, ) + weight.shape)
     b_delta = np.zeros((batches, ) + bias.shape)
 
@@ -70,15 +77,19 @@ def convolution_backward(input, error, weight, bias):
             w_delta += (err * i)
             b_delta += err.reshape((batches, ) + bias.shape)
 
+            bw_err = batch_weight * err
+            #shallow copy
+            bl_err = back_layer_error[:, input_y:input_y + kernel_height, input_x:input_x + kernel_width]
+            bl_err += bw_err
+
             input_x += stride_x
             out_x += 1
+
 
         input_y += stride_y
         out_y += 1
 
-
-
-    return w_delta, np.sum(w_delta, axis=0), np.sum(b_delta, axis=0)
+    return back_layer_error, np.sum(w_delta, axis=0), np.sum(b_delta, axis=0)
 
 
 def train(X, T, learning_rate, iterate):
@@ -86,58 +97,41 @@ def train(X, T, learning_rate, iterate):
     weight = np.random.normal(size=(3, 3))
     bias = np.zeros((1))
 
-    pad_size = 1
-
-    input = np.pad(X, ((0, 0), (pad_size, pad_size), (pad_size, pad_size)), 'constant', constant_values=0)
+    input = padding(X)
 
     for i in range(iterate):
 
         y = convolution_forward(input, weight, bias)
-        s = activation_forward(y)
 
-        #print(s)
-        #print(T)
+        s = activation_forward(y)
 
         g = np.average((s - T)**2)
 
-        if (i % 500) == 0:
-            print(i, ' mse : ', g)
-            #print('s', s[0])
-            #print('t', T[0])
+        if (i % 1000) == 0:
+            print('epoch : ', i, '    mse : ', g)
 
         error = (s - T)
 
         error = activation_backward(s, error)
 
-        #weight_delta = np.dot(X.T, error)
-        #bias_delta = np.sum(error, axis=0)
-
         error, weight_delta, bias_delta = convolution_backward(input, error, weight, bias)
-
-        #print(weight.shape)
-        #print(weight_delta.shape)
 
         weight -= (learning_rate * weight_delta)
         bias -= (learning_rate * bias_delta)
 
     return weight, bias
 
-#X = np.array([[0, 0], [1, 1]])
-#T = np.array([[0], [1]])
-
-#weight, bias = train(X, T, learning_rate = 0.01, iterate = 50000)
-
 
 train_x, train_t, test_x, test_t = loadDataSet()
 
-weight, bias = train(train_x, train_t, learning_rate = 0.001, iterate = 50000)
+weight, bias = train(train_x, train_t, learning_rate = 0.001, iterate = 30000)
 
+input = padding(test_x)
+y = convolution_forward(input, weight, bias)
+s = activation_forward(y)
 
+s = np.where(s >= 0.5, 1.0, s)
+output = np.where(s < 0.5, 0.0, s)
 
-#y1 = linear_forward(X, h1_weight, h1_bias)
-#s1 = activation_forward(y1)
-
-#y2 = linear_forward(s1, h2_weight, h2_bias)
-#s2 = activation_forward(y2)
-
-#print('test : ', s2)
+equal = np.array_equal(output, test_t)
+print('equal : ', equal)
