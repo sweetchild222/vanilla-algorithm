@@ -17,9 +17,13 @@ def activation_backward(error, input):
     return error * input * (1.0 - input)
 
 
-def linear_backward(error, weight):
+def linear_backward(input, error, weight, bias):
 
-    return np.dot(error, weight.T)
+    weight_delta = np.dot(input.T, error)
+    bias_delta = np.sum(error, axis=0)
+    back_layer_error = np.dot(error, weight.T)
+
+    return back_layer_error, weight_delta, bias_delta
 
 
 def train(X, T, learning_rate, iterate):
@@ -51,20 +55,14 @@ def train(X, T, learning_rate, iterate):
 
         error = activation_backward(error, s2)
 
-        h2_weight_delta = np.dot(s1.T, error)
-        h2_bias_delta = np.sum(error, axis=0)
-
-        error = linear_backward(error, h2_weight)
+        error, h2_weight_delta, h2_bias_delta = linear_backward(s1, error, h2_weight, h2_bias)
 
         h2_weight -= (learning_rate * h2_weight_delta)
         h2_bias -= (learning_rate * h2_bias_delta)
 
         error = activation_backward(error, s1)
 
-        h1_weight_delta = np.dot(X.T, error)
-        h1_bias_delta = np.sum(error, axis=0)
-
-        error = linear_backward(error, h1_weight)
+        error, h1_weight_delta, h1_bias_delta = linear_backward(X, error, h1_weight, h1_bias)
 
         h1_weight -= (learning_rate * h1_weight_delta)
         h1_bias -= (learning_rate * h1_bias_delta)

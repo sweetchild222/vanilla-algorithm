@@ -7,7 +7,7 @@ def linear_forward(x, weight, bias):
 
 def linear_backward(input, error, weight, bias):
 
-    weight_delta = np.dot(X.T, error)
+    weight_delta = np.dot(input.T, error)
     bias_delta = np.sum(error, axis=0)
     back_layer_error = np.dot(error, weight.T)
 
