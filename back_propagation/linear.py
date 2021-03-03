@@ -27,7 +27,10 @@ def train(X, T, learning_rate, iterate):
         y = linear_forward(X, weight, bias)
 
         g = np.average((y - T)**2)
-        print(i, ' mse : ', g)
+
+        if (i % 1) == 0:
+            print('epoch : ', i, '    mse : ', g)
+
         error = (y - T)
 
         error, weight_delta, bias_delta = linear_backward(X, error, weight, bias)
