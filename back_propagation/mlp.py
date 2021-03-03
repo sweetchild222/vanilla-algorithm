@@ -48,7 +48,7 @@ def train(X, T, learning_rate, iterate):
 
         g = np.average((s2 - T)**2)
 
-        if (i % 500) == 0:
+        if (i % 1000) == 0:
             print(i, ' mse : ', g)
 
         error = (s2 - T)
