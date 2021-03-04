@@ -14,6 +14,8 @@ def padding(x):
 
 def convolution_forward(input, weight, bias):
 
+    input = padding(input)
+
     (batches, input_height, input_width) = input.shape
     (kernel_height, kernel_width) = weight.shape
     (stride_y, stride_x) = (1, 1)
@@ -57,6 +59,8 @@ def activation_backward(input, error):
 
 def convolution_backward(input, error, weight, bias):
 
+    input = padding(input)
+
     (batches, input_height, input_width) = input.shape
     (kernel_height, kernel_width) = weight.shape
     (stride_y, stride_x) = (1, 1)
@@ -97,11 +101,9 @@ def train(X, T, learning_rate, iterate):
     weight = np.random.normal(size=(3, 3))
     bias = np.zeros((1))
 
-    input = padding(X)
-
     for i in range(iterate):
 
-        y = convolution_forward(input, weight, bias)
+        y = convolution_forward(X, weight, bias)
 
         s = activation_forward(y)
 
@@ -114,7 +116,7 @@ def train(X, T, learning_rate, iterate):
 
         error = activation_backward(s, error)
 
-        error, weight_delta, bias_delta = convolution_backward(input, error, weight, bias)
+        error, weight_delta, bias_delta = convolution_backward(X, error, weight, bias)
 
         weight -= (learning_rate * weight_delta)
         bias -= (learning_rate * bias_delta)
@@ -126,8 +128,7 @@ train_x, train_t, test_x, test_t = loadDataSet()
 
 weight, bias = train(train_x, train_t, learning_rate = 0.001, iterate = 30000)
 
-input = padding(test_x)
-y = convolution_forward(input, weight, bias)
+y = convolution_forward(test_x, weight, bias)
 s = activation_forward(y)
 
 s = np.where(s >= 0.5, 1.0, s)
