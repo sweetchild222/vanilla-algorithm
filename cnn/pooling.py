@@ -183,13 +183,8 @@ def train(X, T, convol_size, convol_stride, pool_size, pool_stride, learning_rat
         if ((i + 1) % 1000) == 0:
             print('epoch : ', i + 1, '    mse : ', g)
             if (iterate - i) == 1:
-
                 np.set_printoptions(formatter={'float_kind': lambda x: "{0:0.3f}".format(x)})
-                #all_x = np.where(s >= 0.5, 1.0, s)
-                #all_x = np.where(all_x < 0.5, 0.0, all_x)
-                print('s', s)
-                #print('all x', all_x)
-                print('p', p)
+                print('output', p)
 
         error = (p - T)
 

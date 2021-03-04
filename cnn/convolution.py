@@ -18,13 +18,13 @@ def padding(input, weight_shape):
     return np.pad(input, ((0, 0), (pad_height, pad_height), (pad_width, pad_width)), 'constant', constant_values=0)
 
 
-def convolution_forward(input, weight, bias):
+def convolution_forward(input, weight, bias, stride):
 
     input = padding(input, weight.shape)
 
     (batches, input_height, input_width) = input.shape
     (weight_height, weight_width) = weight.shape
-    (stride_y, stride_x) = (1, 1)
+    (stride_y, stride_x) = stride
 
     numerator_height = input_height - weight_height
     numerator_width = input_width - weight_width
@@ -63,13 +63,13 @@ def activation_backward(input, error):
     return error * input * (1.0 - input)
 
 
-def convolution_backward(input, error, weight, bias):
+def convolution_backward(input, error, weight, bias, stride):
 
     input = padding(input, weight.shape)
 
     (weight_height, weight_width) = weight.shape
     (batches, input_height, input_width) = input.shape
-    (stride_y, stride_x) = (1, 1)
+    (stride_y, stride_x) = stride
 
     back_layer_error = np.zeros(input.shape)
     batch_weight = np.array([weight] * batches)
@@ -102,27 +102,30 @@ def convolution_backward(input, error, weight, bias):
     return back_layer_error, np.sum(w_delta, axis=0), np.sum(b_delta, axis=0)
 
 
-def train(X, T, learning_rate, iterate):
+def train(X, T, convol_size, convol_stride, learning_rate, iterate):
 
-    weight = np.random.normal(size=(3, 3))
+    weight = np.random.normal(size=convol_size)
     bias = np.zeros((1))
 
     for i in range(iterate):
 
-        y = convolution_forward(X, weight, bias)
+        y = convolution_forward(X, weight, bias, convol_stride)
 
         s = activation_forward(y)
 
         g = np.average((s - T)**2)
 
-        if (i % 1000) == 0:
-            print('epoch : ', i, '    mse : ', g)
+        if ((i + 1) % 1000) == 0:
+            print('epoch : ', (i + 1), '    mse : ', g)
+            if (iterate - i) == 1:
+                np.set_printoptions(formatter={'float_kind': lambda x: "{0:0.3f}".format(x)})
+                print('output', s)
 
         error = (s - T)
 
         error = activation_backward(s, error)
 
-        error, weight_delta, bias_delta = convolution_backward(X, error, weight, bias)
+        error, weight_delta, bias_delta = convolution_backward(X, error, weight, bias, convol_stride)
 
         weight -= (learning_rate * weight_delta)
         bias -= (learning_rate * bias_delta)
@@ -130,11 +133,14 @@ def train(X, T, learning_rate, iterate):
     return weight, bias
 
 
+convol_size = (3, 3)
+convol_stride = (1, 1)
+
 train_x, train_t, test_x, test_t = loadDataSet()
 
-weight, bias = train(train_x, train_t, learning_rate = 0.001, iterate = 30000)
+weight, bias = train(train_x, train_t, convol_size, convol_stride, learning_rate = 0.001, iterate = 30000)
 
-y = convolution_forward(test_x, weight, bias)
+y = convolution_forward(test_x, weight, bias, convol_size)
 s = activation_forward(y)
 
 s = np.where(s >= 0.5, 1.0, s)

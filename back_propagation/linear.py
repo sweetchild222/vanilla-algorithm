@@ -28,8 +28,8 @@ def train(X, T, learning_rate, iterate):
 
         g = np.average((y - T)**2)
 
-        if (i % 1) == 0:
-            print('epoch : ', i, '    mse : ', g)
+        if ((i + 1) % 1) == 0:
+            print('epoch : ', (i + 1), '    mse : ', g)
 
         error = (y - T)
 
