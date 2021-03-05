@@ -1,5 +1,5 @@
 import numpy as np
-import core.activation as act
+import core.sigmoid as sigmoid
 import core.linear as linear
 
 
@@ -25,9 +25,9 @@ def train(x, target, learning_rate, iterate):
     for i in range(iterate):
 
         y1 = linear.forward(x, h1_weight, h1_bias)
-        s1 = act.sigmoid_forward(y1)
+        s1 = sigmoid.forward(y1)
         y2 = linear.forward(s1, h2_weight, h2_bias)
-        predict = act.sigmoid_forward(y2)
+        predict = sigmoid.forward(y2)
 
         error = (predict - target)
 
@@ -35,14 +35,14 @@ def train(x, target, learning_rate, iterate):
 
         print_summary(i, mse)
 
-        error = act.sigmoid_backward(y2, error)
+        error = sigmoid.backward(y2, error)
 
         error, h2_weight_delta, h2_bias_delta = linear.backward(s1, error, h2_weight, h2_bias)
 
         h2_weight -= (learning_rate * h2_weight_delta)
         h2_bias -= (learning_rate * h2_bias_delta)
 
-        error = act.sigmoid_backward(y1, error)
+        error = sigmoid.backward(y1, error)
 
         error, h1_weight_delta, h1_bias_delta = linear.backward(x, error, h1_weight, h1_bias)
 
@@ -57,9 +57,9 @@ target = np.array([[0], [1]])
 h1_weight, h1_bias, h2_weight, h2_bias = train(train_x, target, learning_rate = 0.01, iterate = 5000)
 
 y1 = linear.forward(train_x, h1_weight, h1_bias)
-s1 = act.sigmoid_forward(y1)
+s1 = sigmoid.forward(y1)
 
 y2 = linear.forward(s1, h2_weight, h2_bias)
-predict = act.sigmoid_forward(y2)
+predict = sigmoid.forward(y2)
 
 print('predict : ', predict)

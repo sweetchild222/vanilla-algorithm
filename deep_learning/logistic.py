@@ -1,6 +1,6 @@
 import numpy as np
 
-import core.activation as act
+import core.sigmoid as sigmoid
 import core.linear as linear
 
 
@@ -21,7 +21,7 @@ def train(x, target, learning_rate, iterate):
     for i in range(iterate):
 
         y = linear.forward(x, weight, bias)
-        predict = act.sigmoid_forward(y)
+        predict = sigmoid.forward(y)
 
         error = (predict - target)
 
@@ -29,7 +29,7 @@ def train(x, target, learning_rate, iterate):
 
         print_summary(i, mse)
 
-        error = act.sigmoid_backward(y, error)
+        error = sigmoid.backward(y, error)
 
         error, weight_delta, bias_delta = linear.backward(x, error, weight, bias)
 
@@ -44,6 +44,6 @@ target = np.array([[1]])
 weight, bias = train(train_x, target, learning_rate = 0.2, iterate = 500)
 
 y = linear.forward(train_x, weight, bias)
-predict = act.sigmoid_forward(y)
+predict = sigmoid.forward(y)
 
 print('predict : ', predict)

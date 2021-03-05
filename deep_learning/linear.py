@@ -7,7 +7,6 @@ def print_summary(epoch, mse):
         print('epoch : ', (epoch + 1), '    mse : ', mse)
 
 
-
 def train(x, target, learning_rate, iteration):
 
     inputNodes = x.shape[-1]

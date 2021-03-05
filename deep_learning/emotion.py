@@ -3,7 +3,7 @@ import numpy as np
 from cnn.loader import *
 import core.convolution as conv
 import core.pooling as pool
-import core.activation as act
+import core.sigmoid as sigmoid
 
 
 def train(x, target, convol_size, convol_stride, pool_size, pool_stride, learning_rate, iterate):
@@ -15,7 +15,7 @@ def train(x, target, convol_size, convol_stride, pool_size, pool_stride, learnin
 
         c1 = conv.forward(x, c1_weight, c1_bias, convol_stride)
 
-        cs1 = act.sigmoid_forward(c1)
+        cs1 = sigmoid.forward(c1)
 
         predict = pool.forward(cs1, pool_size, pool_stride)
 
@@ -32,7 +32,7 @@ def train(x, target, convol_size, convol_stride, pool_size, pool_stride, learnin
 
         error = pool.backward(cs1, error, pool_size, pool_stride)
 
-        error = act.sigmoid_backward(c1, error)
+        error = sigmoid.backward(c1, error)
 
         error, weight_delta, bias_delta = conv.backward(x, error, c1_weight, c1_bias, convol_stride)
 
@@ -57,7 +57,7 @@ print(train_t)
 c1_weight, c1_bias = train(train_x, train_t, convol_size, convol_stride, pool_size, pool_stride, learning_rate = 0.001, iterate = 100)
 
 y = conv.forward(test_x, c1_weight, c1_bias, convol_stride)
-s = act.sigmoid_forward(y)
+s = sigmoid.forward(y)
 predict = pool.forward(s, pool_size, pool_stride)
 
 predict = np.where(predict >= 0.5, 1.0, predict)
