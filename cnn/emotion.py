@@ -8,6 +8,40 @@ def activation_forward(x):
     return 1 / (1 + np.exp(-x))
 
 
+def convolution_output_shape(input_shape, weight_shape, stride):
+
+    (input_height, input_width) = input_shape
+    (weight_height, weight_width) = weight_shape
+    (stride_y, stride_x) = stride
+
+    numerator_height = input_height - weight_height
+    numerator_width = input_width - weight_width
+
+    output_shape = ((numerator_height // stride_y) + 1, (numerator_width // stride_x) + 1)
+
+    return output_shape
+
+def padding_output_shape(weight_shape):
+
+    (weight_height, weight_width) = weight_shape
+
+    pad_height = weight_height // 2
+    pad_width = weight_width // 2
+
+    return weight_shape + (pad_height, pad_width)
+
+
+def pooling_output_shape(input_shape, pool_size, stride):
+
+    (input_height, input_width) = input_shape
+    (pool_height, pool_width) = pool_size
+    (stride_y, stride_x) = stride
+
+    output_shape = ((input_height // stride_y), (input_width // stride_x))
+
+    return output_shape
+
+
 def padding(input, weight_shape):
 
     (weight_height, weight_width) = weight_shape
@@ -26,10 +60,7 @@ def convolution_forward(input, weight, bias, stride):
     (weight_height, weight_width) = weight.shape
     (stride_y, stride_x) = stride
 
-    numerator_height = input_height - weight_height
-    numerator_width = input_width - weight_width
-
-    output_shape = ((numerator_height // stride_y) + 1, (numerator_width // stride_x) + 1)
+    output_shape = convolution_output_shape(input.shape[-2:], weight.shape, stride)
 
     output = np.zeros((batches, ) + output_shape)
 
@@ -56,13 +87,13 @@ def convolution_forward(input, weight, bias, stride):
     return output
 
 
-def pooling_forward(input, pool_size, pool_stride):
+def pooling_forward(input, pool_size, stride):
 
     (batches, input_height, input_width) = input.shape
     (pool_height, pool_width) = pool_size
-    (stride_y, stride_x) = pool_stride
+    (stride_y, stride_x) = stride
 
-    output_shape = ((input_height // stride_y), (input_width // stride_x))
+    output_shape = pooling_output_shape(input.shape[-2:], pool_size, stride)
 
     output = np.zeros((batches, ) + output_shape)
 
