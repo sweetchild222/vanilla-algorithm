@@ -203,7 +203,7 @@ convol_stride = (1, 1)
 pool_size = (2, 2)
 pool_stride = pool_size
 
-train_x, train_t, test_x, test_t = loadDataSet('image/shape/train', 'image/shape/test')
+train_x, train_t, test_x, test_t = loadDataSet('image/shape/train', 'image/shape/target', 'image/shape/test')
 
 train_t = pooling_forward(train_t, pool_size, pool_stride)
 test_t = pooling_forward(test_t, pool_size, pool_stride)

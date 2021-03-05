@@ -144,10 +144,10 @@ def train(X, T, convol_size, convol_stride, pool_size, pool_stride, learning_rat
             print('epoch : ', (i + 1), '    mse : ', g)
             if (iterate - i) == 1:
                 np.set_printoptions(formatter={'float_kind': lambda x: "{0:0.2f}".format(x)})
-                print('convol output', y)
-                print('act output', s)
+                print('convolution output', y)
+                print('activation output', s)
                 p = pooling_forward(s, pool_size, pool_stride)
-                print('poll output', p)
+                print('pooling output', p)
 
 
         error = (s - T)
@@ -167,7 +167,7 @@ convol_stride = (1, 1)
 pool_size = (2, 2)
 pool_stride = pool_size
 
-train_x, train_t, test_x, test_t = loadDataSet('image/shape/train', 'image/shape/test')
+train_x, train_t, test_x, test_t = loadDataSet('image/shape/train', 'image/shape/target', 'image/shape/test')
 
 weight, bias = train(train_x, train_t, convol_size, convol_stride, pool_size, pool_stride, learning_rate = 0.001, iterate = 30000)
 

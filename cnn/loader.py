@@ -5,6 +5,7 @@ import os
 from array import *
 from random import shuffle
 import operator
+import sys
 
 def getLabels(trainPath):
 
@@ -15,13 +16,21 @@ def getLabels(trainPath):
 
 	return labels
 
-def loadMNISTFiles(path, lables):
+def loadFiles(path, targetPath, lables):
 
 	X = []
+	T = []
 
 	imgSize = 0
 
 	for label in lables:
+
+		targetFile = targetPath + '/' + label + '.png'
+
+		if os.path.isfile(targetFile) == False:
+			continue
+
+		target = loadTargetFile(targetFile)
 
 		subPath = path + '/' + label
 
@@ -32,39 +41,49 @@ def loadMNISTFiles(path, lables):
 
 			filePath = subPath + '/' + fileName
 
-			img = np.array(Image.open(filePath)).astype(np.float32)
+			img = np.array(Image.open(filePath).convert('L')).astype(np.float32)
 			imgSize = img.shape[0]
 
 			X.append(img)
+			T.append(target)
 
-	return np.array(X).reshape(len(X), imgSize, imgSize)
+	X = np.array(X).reshape(len(X), imgSize, imgSize)
+	T = np.array(T).reshape(len(T), imgSize, imgSize)
+
+	return X, T
 
 
-def extractMNIST(trainPath, testPath):
+def loadTargetFile(filePath):
+
+	return np.array(Image.open(filePath).convert('L')).astype(np.float32)
+
+
+def extractImage(trainPath, targetPath, testPath):
 
 	lables = getLabels(trainPath)
 
-	train_x = loadMNISTFiles(trainPath, lables)
+	train_x, train_t = loadFiles(trainPath, targetPath, lables)
 
-	test_x = loadMNISTFiles(testPath, lables)
+	test_x,  test_t = loadFiles(testPath, targetPath, lables)
 
-	return train_x, test_x
+	return train_x, train_t, test_x, test_t
 
 
-def loadDataSet(trainPath, testPath):
+def loadDataSet(trainPath, targetPath, testPath):
 
-	train_x, test_x = extractMNIST(trainPath, testPath)
+	train_x, train_t, test_x, test_t = extractImage(trainPath, targetPath, testPath)
 
 	all_x = np.vstack((train_x, test_x))
-	all_x /= np.max(all_x)
+	max = np.max(all_x)
+	all_x /= max
 
-	train_x = all_x[0:len(train_x)]
-	test_x = all_x[-len(test_x):]
+	train_x = np.round(all_x[0:len(train_x)], decimals=1)
+	test_x = np.round(all_x[-len(test_x):], decimals=1)
 
-	all_t = np.where(all_x >= 0.5, 1.0, all_x)
-	all_t = np.where(all_t < 0.5, 0.0, all_t)
+	all_t = np.vstack((train_t, test_t))
+	all_t /= max
 
-	train_t = all_t[0:len(train_x)]
-	test_t = all_t[-len(test_x):]
+	train_t = np.round(all_t[0:len(train_t)], decimals=1)
+	test_t = np.round(all_t[-len(test_t):], decimals=1)
 
 	return train_x, train_t, test_x, test_t
