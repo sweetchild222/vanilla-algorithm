@@ -1,11 +1,8 @@
 from PIL import Image
 import numpy as np
-import random
 import os
 from array import *
-from random import shuffle
-import operator
-import sys
+
 
 def getLabels(trainPath):
 
