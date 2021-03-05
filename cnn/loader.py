@@ -37,8 +37,6 @@ def loadMNISTFiles(path, lables):
 
 			X.append(img)
 
-	#matrixToImage(np.array(X).reshape(len(X), 1, imgSize * imgSize))
-
 	return np.array(X).reshape(len(X), imgSize, imgSize)
 
 
@@ -53,9 +51,9 @@ def extractMNIST(trainPath, testPath):
 	return train_x, test_x
 
 
-def loadDataSet():
+def loadDataSet(trainPath, testPath):
 
-	train_x, test_x = extractMNIST('image/train', 'image/test')
+	train_x, test_x = extractMNIST(trainPath, testPath)
 
 	all_x = np.vstack((train_x, test_x))
 	all_x /= np.max(all_x)

@@ -30,8 +30,6 @@ def convolution_forward(input, weight, bias, stride):
     numerator_width = input_width - weight_width
 
     output_shape = ((numerator_height // stride_y) + 1, (numerator_width // stride_x) + 1)
-    #a = np.array([[[1,1,1], [1,1,1], [1,1,1]], [[2,2,2], [2,2,2], [2,2,2]], [[3,3,3], [3,3,3], [3,3,3]], [[4,4,4], [4,4,4], [4,4,4]]])
-    #b = np.array([[2,2,2], [2,2,2], [2,2,2]])
 
     output = np.zeros((batches, ) + output_shape)
 
@@ -102,7 +100,34 @@ def convolution_backward(input, error, weight, bias, stride):
     return back_layer_error, np.sum(w_delta, axis=0), np.sum(b_delta, axis=0)
 
 
-def train(X, T, convol_size, convol_stride, learning_rate, iterate):
+def pooling_forward(input, pool_size, pool_stride):
+
+    (batches, input_height, input_width) = input.shape
+    (pool_height, pool_width) = pool_size
+    (stride_y, stride_x) = pool_stride
+
+    output_shape = ((input_height // stride_y), (input_width // stride_x))
+
+    output = np.zeros((batches, ) + output_shape)
+
+    input_y = out_y = 0
+    while (input_y + pool_height) <= input_height:
+        input_x = out_x = 0
+        while (input_x + pool_width) <= input_width:
+            i = input[:, input_y:input_y + pool_height, input_x:input_x + pool_width]
+            max_pool = np.max(i.reshape((batches, -1)), axis=-1)
+            output[:, out_y, out_x] = max_pool
+
+            input_x += stride_x
+            out_x += 1
+
+        input_y += stride_y
+        out_y += 1
+
+    return output
+
+
+def train(X, T, convol_size, convol_stride, pool_size, pool_stride, learning_rate, iterate):
 
     weight = np.random.normal(size=convol_size)
     bias = np.zeros((1))
@@ -118,8 +143,12 @@ def train(X, T, convol_size, convol_stride, learning_rate, iterate):
         if ((i + 1) % 1000) == 0:
             print('epoch : ', (i + 1), '    mse : ', g)
             if (iterate - i) == 1:
-                np.set_printoptions(formatter={'float_kind': lambda x: "{0:0.3f}".format(x)})
-                print('output', s)
+                np.set_printoptions(formatter={'float_kind': lambda x: "{0:0.2f}".format(x)})
+                print('convol output', y)
+                print('act output', s)
+                p = pooling_forward(s, pool_size, pool_stride)
+                print('poll output', p)
+
 
         error = (s - T)
 
@@ -135,16 +164,23 @@ def train(X, T, convol_size, convol_stride, learning_rate, iterate):
 
 convol_size = (3, 3)
 convol_stride = (1, 1)
+pool_size = (2, 2)
+pool_stride = pool_size
 
-train_x, train_t, test_x, test_t = loadDataSet()
+train_x, train_t, test_x, test_t = loadDataSet('image/shape/train', 'image/shape/test')
 
-weight, bias = train(train_x, train_t, convol_size, convol_stride, learning_rate = 0.001, iterate = 30000)
+weight, bias = train(train_x, train_t, convol_size, convol_stride, pool_size, pool_stride, learning_rate = 0.001, iterate = 30000)
 
-y = convolution_forward(test_x, weight, bias, convol_size)
-s = activation_forward(y)
+print('weight: ', weight)
+print('bias: ', bias)
 
-s = np.where(s >= 0.5, 1.0, s)
-output = np.where(s < 0.5, 0.0, s)
+y = convolution_forward(test_x, weight, bias, convol_stride)
+predict = activation_forward(y)
 
-equal = np.array_equal(output, test_t)
+predict = np.where(predict >= 0.5, 1.0, predict)
+predict = np.where(predict < 0.5, 0.0, predict)
+
+print('predict', predict)
+
+equal = np.array_equal(predict, test_t)
 print('equal : ', equal)

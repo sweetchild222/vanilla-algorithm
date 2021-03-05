@@ -30,8 +30,6 @@ def convolution_forward(input, weight, bias, stride):
     numerator_width = input_width - weight_width
 
     output_shape = ((numerator_height // stride_y) + 1, (numerator_width // stride_x) + 1)
-    #a = np.array([[[1,1,1], [1,1,1], [1,1,1]], [[2,2,2], [2,2,2], [2,2,2]], [[3,3,3], [3,3,3], [3,3,3]], [[4,4,4], [4,4,4], [4,4,4]]])
-    #b = np.array([[2,2,2], [2,2,2], [2,2,2]])
 
     output = np.zeros((batches, ) + output_shape)
 
@@ -205,23 +203,22 @@ convol_stride = (1, 1)
 pool_size = (2, 2)
 pool_stride = pool_size
 
-train_x, train_t, test_x, test_t = loadDataSet()
+train_x, train_t, test_x, test_t = loadDataSet('image/shape/train', 'image/shape/test')
 
 train_t = pooling_forward(train_t, pool_size, pool_stride)
 test_t = pooling_forward(test_t, pool_size, pool_stride)
 
-
-weight, bias = train(train_x, train_t, convol_size, convol_stride, pool_size, pool_stride, learning_rate = 0.001, iterate = 100000)
+weight, bias = train(train_x, train_t, convol_size, convol_stride, pool_size, pool_stride, learning_rate = 0.001, iterate = 50000)
 
 y = convolution_forward(test_x, weight, bias, convol_stride)
 s = activation_forward(y)
-p = pooling_forward(s, pool_size, pool_stride)
+predict = pooling_forward(s, pool_size, pool_stride)
 
-p = np.where(p >= 0.5, 1.0, p)
-output = np.where(p < 0.5, 0.0, p)
+predict = np.where(predict >= 0.5, 1.0, predict)
+predict = np.where(predict < 0.5, 0.0, predict)
 
-print('out', output)
+print('predict', predict)
 print('test', test_t)
 
-equal = np.array_equal(output, test_t)
+equal = np.array_equal(predict, test_t)
 print('equal : ', equal)
