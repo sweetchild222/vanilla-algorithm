@@ -6,15 +6,6 @@ import core.pooling as pool
 import core.activation as act
 
 
-def activation_forward(x):
-
-    return 1 / (1 + np.exp(-x))
-
-def activation_backward(input, error):
-
-    return error * input * (1.0 - input)
-
-
 def train(X, T, convol_size, convol_stride, pool_size, pool_stride, learning_rate, iterate):
 
     c1_weight = np.random.normal(size=convol_size)
@@ -22,9 +13,9 @@ def train(X, T, convol_size, convol_stride, pool_size, pool_stride, learning_rat
 
     for i in range(iterate):
 
-        y = conv.forward(X, c1_weight, c1_bias, convol_stride)
+        c1 = conv.forward(X, c1_weight, c1_bias, convol_stride)
 
-        s = act.sigmoid_forward(y)
+        s = act.sigmoid_forward(c1)
 
         p = pool.forward(s, pool_size, pool_stride)
 
@@ -40,7 +31,7 @@ def train(X, T, convol_size, convol_stride, pool_size, pool_stride, learning_rat
 
         error = pool.backward(s, error, pool_size, pool_stride)
 
-        error = act.sigmoid_backward(s, error)
+        error = act.sigmoid_backward(c1, error)
 
         error, weight_delta, bias_delta = conv.backward(X, error, c1_weight, c1_bias, convol_stride)
 
@@ -62,7 +53,7 @@ test_t = pool.forward(test_t, pool_size, pool_stride)
 
 print(train_t)
 
-c1_weight, c1_bias = train(train_x, train_t, convol_size, convol_stride, pool_size, pool_stride, learning_rate = 0.001, iterate = 1000)
+c1_weight, c1_bias = train(train_x, train_t, convol_size, convol_stride, pool_size, pool_stride, learning_rate = 0.001, iterate = 100)
 
 y = conv.forward(test_x, c1_weight, c1_bias, convol_stride)
 s = act.sigmoid_forward(y)

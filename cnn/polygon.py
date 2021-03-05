@@ -33,7 +33,7 @@ def train(X, T, convol_size, convol_stride, pool_size, pool_stride, learning_rat
 
         error = pool.backward(s, error, pool_size, pool_stride)
 
-        error = act.sigmoid_backward(s, error)
+        error = act.sigmoid_backward(y, error)
 
         error, weight_delta, bias_delta = conv.backward(X, error, weight, bias, convol_stride)
 

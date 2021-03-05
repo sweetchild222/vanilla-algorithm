@@ -1,11 +1,13 @@
 import numpy as np
 
 
-def sigmoid_forward(x):
+def sigmoid_forward(input):
 
-    return 1 / (1 + np.exp(-x))
+    return 1 / (1 + np.exp(-input))
 
 
 def sigmoid_backward(input, error):
 
-    return error * input * (1.0 - input)
+    output = sigmoid_forward(input)
+
+    return error * output * (1.0 - output)

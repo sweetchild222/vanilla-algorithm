@@ -4,7 +4,7 @@ import numpy as np
 def calc_output_shape(input_shape, pool_size, stride):
 
     (input_height, input_width) = input_shape
-    (pool_height, pool_width) = pool_size
+
     (stride_y, stride_x) = stride
 
     output_shape = ((input_height // stride_y), (input_width // stride_x))
