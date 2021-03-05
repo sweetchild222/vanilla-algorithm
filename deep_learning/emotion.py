@@ -5,6 +5,15 @@ import core.convolution as conv
 import core.pooling as pool
 import core.sigmoid as sigmoid
 
+def print_summary(epoch, iterate, mse, predict):
+
+    if ((epoch + 1) % 1000) == 0:
+        print('epoch : ', (epoch + 1), '    mse : ', mse)
+
+    if (iterate - epoch) == 1:
+        np.set_printoptions(formatter={'float_kind': lambda x: "{0:0.3f}".format(x)})
+        print('predict', predict)
+
 
 def train(x, target, convol_size, convol_stride, pool_size, pool_stride, learning_rate, iterate):
 
@@ -23,12 +32,7 @@ def train(x, target, convol_size, convol_stride, pool_size, pool_stride, learnin
 
         mse = np.average(error**2)
 
-        if ((i + 1) % 1000) == 0:
-            print('epoch : ', i + 1, '    mse : ', g)
-            if (iterate - i) == 1:
-                np.set_printoptions(formatter={'float_kind': lambda x: "{0:0.3f}".format(x)})
-                print('output', p)
-
+        print_summary(i, mse, iterate, predict)
 
         error = pool.backward(cs1, error, pool_size, pool_stride)
 
