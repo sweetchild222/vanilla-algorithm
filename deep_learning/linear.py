@@ -15,9 +15,9 @@ def train(x, target, learning_rate, iteration):
     bias = np.zeros(outputNodes)
 
     for i in range(iteration):
-        predict = test(x, weight, bias)
+        y = test(x, weight, bias)
 
-        error = predict - target
+        error = y - target
 
         mse = np.average(error**2)
 
@@ -56,4 +56,5 @@ test_x = np.array([[9.0, 40]])
 
 predict = test(test_x, weight, bias)
 
-print('x : ', test_x, ', predict : ', predict)
+print('x : ', test_x)
+print('predict : ', predict)
