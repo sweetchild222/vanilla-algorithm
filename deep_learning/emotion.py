@@ -92,6 +92,7 @@ for l in range(layer_count):
     train_t = pool.forward(train_t, pool_size, pool_stride)
     test_t = pool.forward(test_t, pool_size, pool_stride)
 
+
 print(train_t)
 
 weight_list, bias_list = train(train_x, train_t, convol_size, convol_stride, pool_size, pool_stride, layer_count, learning_rate = 0.001, iterate = 5000)
