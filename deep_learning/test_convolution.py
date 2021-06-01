@@ -58,7 +58,8 @@ convol_stride = (1, 1)
 pool_size = (2, 2)
 pool_stride = pool_size
 
-train_x, train_t, test_x, test_t = loadDataSet('cnn/image/shape/train', 'cnn/image/shape/target', 'cnn/image/shape/test')
+train_x, train_t, test_x, test_t = loadDataSet('cnn/image/line/train', 'cnn/image/line/target', 'cnn/image/line/test')
+
 
 weight, bias = train(train_x, train_t, convol_size, convol_stride, pool_size, pool_stride, learning_rate = 0.001, iterate = 30000)
 

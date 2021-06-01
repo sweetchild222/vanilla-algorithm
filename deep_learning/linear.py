@@ -44,8 +44,9 @@ def gradient(x, error):
     return weight_delta, bias_delta
 
 
-x = np.array([[5.0, 50], [6.0, 20], [10.0, 30], [7.0, 40], [8.0, 20], [12.0, 60]])
-target = np.array([[13.0], [15.5], [22.5], [17.0], [20.0], [26.5]])
+x = np.array([[5.0, 50.0], [6.0, 20.0], [10.0, 30.0], [7.0, 40.0], [8.0, 20.0], [11.0, 60.0]])
+target = np.array([[13.0], [14.5], [17.5], [15.0], [17.0], [19.5]])
+
 
 weight, bias = train(x, target, learning_rate = 1e-4, epochs = 100000)
 
