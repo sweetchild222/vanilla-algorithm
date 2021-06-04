@@ -4,10 +4,14 @@ import core.sigmoid as sigmoid
 import core.linear as linear
 
 
-def print_summary(epoch, mse):
+def print_summary(epoch, loss):
 
-    if ((epoch + 1) % 100) == 0:
-        print('epoch : ', (epoch + 1), '    mse : ', mse)
+    #if ((epoch + 1) % 100) == 0:
+    print('epoch : ', (epoch + 1), '    loss : ', loss)
+
+
+def print_numpy(key, value):
+    print(key, ' : ', np.round_(value, 3))
 
 
 def train(x, target, learning_rate, iterate):
@@ -21,27 +25,37 @@ def train(x, target, learning_rate, iterate):
     for i in range(iterate):
 
         y = linear.forward(x, weight, bias)
-        predict = sigmoid.forward(y)
+        p = sigmoid.forward(y)
 
-        error = (predict - target)
+        p_error = (p - target)
 
-        mse = np.average(error**2)
+        loss = np.average(p_error**2)
+        print_numpy('w', weight)
+        print_numpy('b', bias)
+        print_numpy('y', y)
+        print_numpy('p', p)
+        print_numpy('L', loss)
 
-        print_summary(i, mse)
+        y_error = sigmoid.backward(y, p_error)
+        x_error, w_error, b_error = linear.backward(x, y_error, weight, bias)
 
-        error = sigmoid.backward(y, error)
+        weight -= (learning_rate * w_error)
+        bias -= (learning_rate * b_error)
 
-        error, weight_delta, bias_delta = linear.backward(x, error, weight, bias)
+        print_numpy('~p', p_error)
+        print_numpy('~y', y_error)
+        print_numpy('~x', x_error)
+        print_numpy('~w', w_error)
+        print_numpy('~b', b_error)
 
-        weight -= (learning_rate * weight_delta)
-        bias -= (learning_rate * bias_delta)
+        print('----- epoch : ', (i + 1), '------')
 
     return weight, bias
 
 train_x = np.array([[5]])
 target = np.array([[1]])
 
-weight, bias = train(train_x, target, learning_rate = 0.2, iterate = 500)
+weight, bias = train(train_x, target, learning_rate = 0.2, iterate = 4)
 
 y = linear.forward(train_x, weight, bias)
 predict = sigmoid.forward(y)
