@@ -13,8 +13,8 @@ public class ImageResize {
         final float widthRatio = (float) targetWidth / srcImage.getWidth();
         final float heightRatio = (float) targetHeight / srcImage.getHeight();
 
-        int scaledWidth = widthRatio >= heightRatio ? targetWidth : (int) (srcImage.getWidth() * heightRatio);
-        int scaledHeight = widthRatio <= heightRatio ? targetHeight : (int) (srcImage.getHeight() * widthRatio);
+        int scaledWidth = widthRatio >= heightRatio ? targetWidth : Math.round(srcImage.getWidth() * heightRatio);
+        int scaledHeight = widthRatio <= heightRatio ? targetHeight : Math.round(srcImage.getHeight() * widthRatio);
 
         final Image scaledImage = srcImage.getScaledInstance(scaledWidth, scaledHeight, Image.SCALE_SMOOTH);
         final BufferedImage newImage = new BufferedImage(scaledWidth, scaledHeight, BufferedImage.TYPE_INT_ARGB);
@@ -44,35 +44,31 @@ public class ImageResize {
 
     public static BufferedImage [] resize(BufferedImage srcImage, int orientation, int[][] sizeList) {
 
-        final BufferedImage rotatedImage = rotate(srcImage, orientation);
+        final BufferedImage rotatedSrcImage = rotate(srcImage, orientation);
 
-        if(rotatedImage == null)
+        if (rotatedSrcImage == null)
             return null;
-
-        BufferedImage curImage = rotatedImage;
 
         final ArrayList<BufferedImage> list = new ArrayList<>();
 
-        for(int [] size: sizeList) {
+        for (int[] size : sizeList) {
 
             final int targetWidth = size[0];
             final int targetHeight = size[1];
 
-            if (curImage.getWidth() == targetWidth && curImage.getHeight() == targetHeight) {
-                list.add(curImage);
-            }
-            else {
+            if (rotatedSrcImage.getWidth() == targetWidth && rotatedSrcImage.getHeight() == targetHeight) {
+                list.add(rotatedSrcImage);
+            } else {
 
-                final BufferedImage scaledImage = scaleToFit(curImage, targetWidth, targetHeight);
+                final BufferedImage scaledImage = scaleToFit(rotatedSrcImage, targetWidth, targetHeight);
 
-                curImage = crop(scaledImage, targetWidth, targetHeight);
+                BufferedImage croppedImage = crop(scaledImage, targetWidth, targetHeight);
 
-                list.add(curImage);
+                list.add(croppedImage);
             }
         }
 
         return list.toArray(BufferedImage[]::new);
-
     }
 
 
