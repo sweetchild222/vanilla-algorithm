@@ -14,9 +14,9 @@ public class Main {
 
     static void main() {
 
-        final int[][] articleThumbnailSupportSizeList = {{256, 256}, {128, 128}, {64, 64}, {32, 32}};
-        final String articleThumbnailPath = "D:/images";
-        final ImageSetWriter articleThumbnailSetWriter = new ImageSetWriter(articleThumbnailPath);
+        final int[][] sizeList = {{256, 256}, {128, 128}, {64, 64}, {32, 32}};
+        final String filePath = "D:/images";
+        final ImageSetWriter writer = new ImageSetWriter(filePath);
 
         try {
 
@@ -28,7 +28,7 @@ public class Main {
 
             BufferedImage image = ImageIO.read(connection.getInputStream());
 
-            final String id = writeImageSet(image, articleThumbnailSupportSizeList, articleThumbnailSetWriter);
+            final String id = writeImageSet(image, sizeList, writer);
 
         } catch (IOException e) {
 
